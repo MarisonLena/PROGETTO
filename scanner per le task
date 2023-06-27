@@ -1,0 +1,36 @@
+import java.util.Scanner;
+
+public class TaskMenu {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+
+
+        System.out.println("1. Perform Task 1");
+        System.out.println("2. Perform Task 2");
+        System.out.println("3. Perform Task 3");
+
+       
+        System.out.print("Enter the number of the task you want to perform: ");
+        int taskNumber = scanner.nextInt();
+
+       
+        switch (taskNumber) {
+            case 1:
+                performTask1();
+                break;
+            case 2:
+                performTask2();
+                break;
+            case 3:
+                performTask3();
+                break;
+            default:
+                System.out.println("Invalid task number.");
+        }
+
+        scanner.close();
+    }
+
+    
+  
