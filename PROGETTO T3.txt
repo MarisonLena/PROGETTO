@@ -1,0 +1,70 @@
+   int numSviluppatoriDaAssegnare = scanner.nextInt();
+        List<Sviluppatore> sviluppatoriDaAssegnare = new ArrayList<>();
+        for (int i = 0; i < numSviluppatoriDaAssegnare; i++) {
+            int id = scanner.nextInt();
+            int numCompetenze = scanner.nextInt();
+
+            List<Competenza> competenze = new ArrayList<>();
+            for (int j = 0; j < numCompetenze; j++) {
+                String linguaggio = scanner.next();
+                int skill = scanner.nextInt();
+                Competenza competenza = new Competenza(linguaggio, skill);
+                competenze.add(competenza);
+            }
+
+            Sviluppatore sviluppatore = new Sviluppatore(id, competenze);
+            sviluppatoriDaAssegnare.add(sviluppatore);
+        }
+
+        boolean condition5 = false;
+        boolean condition6 = false;
+        boolean condition7 = false;
+
+        // Verifica la condizione 5
+        boolean progettoSenzaSviluppatori = false;
+        for (Progetto progetto : progetti) {
+            if (progetto.sviluppatoriAssegnati.isEmpty()) {
+                progettoSenzaSviluppatori = true;
+                break;
+            }
+        }
+        condition5 = progettoSenzaSviluppatori;
+
+        // Verifica la condizione 6
+        boolean progettoFinalizzabilePrecedente = false;
+        for (Progetto progetto : progetti) {
+            if (!progetto.sviluppatoriAssegnati.isEmpty() && progetto.isFinalizzabile()) {
+                progettoFinalizzabilePrecedente = true;
+                break;
+            }
+        }
+        condition6 = progettoFinalizzabilePrecedente;
+
+        // Verifica la condizione 7
+        boolean competenzeSufficienti = true;
+        for (Sviluppatore sviluppatore : sviluppatoriDaAssegnare) {
+            for (Progetto progetto : sviluppatore.progettiAssegnati) {
+                boolean proficiencyFound = false;
+                for (Competenza competenza : sviluppatore.competenze) {
+                    if (progetto.linguaggiRichiesti.stream().anyMatch(l -> l.nome.equals(competenza.linguaggio))) {
+                        proficiencyFound = true;
+                        break;
+                    }
+                }
+                if (!proficiencyFound) {
+                    competenzeSufficienti = false;
+                    break;
+                }
+            }
+        }
+        condition7 = competenzeSufficienti;
+
+        if (condition5 && condition6 && condition7) {
+            System.out.println("VALID");
+        } else {
+            System.out.println("NOT VALID");
+        }
+
+        scanner.close();
+    }
+}
