@@ -1,0 +1,137 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Competenza {
+    private String nome;
+
+    public Competenza(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+}
+
+class Linguaggio {
+    private String nome;
+
+    public Linguaggio(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+}
+
+class Progetto {
+    private String nome;
+    private List<Linguaggio> linguaggiRichiesti;
+
+    public Progetto(String nome) {
+        this.nome = nome;
+        this.linguaggiRichiesti = new ArrayList<>();
+    }
+
+    public void aggiungiLinguaggio(Linguaggio linguaggio) {
+        linguaggiRichiesti.add(linguaggio);
+    }
+
+    public boolean richiedeLinguaggio(Linguaggio linguaggio) {
+        return linguaggiRichiesti.contains(linguaggio);
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public List<Linguaggio> getLinguaggiRichiesti() {
+        return linguaggiRichiesti;
+    }
+}
+
+class Sviluppatore {
+    private String nome;
+    private List<Competenza> competenze;
+
+    public Sviluppatore(String nome) {
+        this.nome = nome;
+        this.competenze = new ArrayList<>();
+    }
+
+    public void aggiungiCompetenza(Competenza competenza) {
+        competenze.add(competenza);
+    }
+
+    public boolean haCompetenza(Competenza competenza) {
+        return competenze.contains(competenza);
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public List<Competenza> getCompetenze() {
+        return competenze;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<Progetto> progetti = new ArrayList<>();
+        List<Sviluppatore> sviluppatori = new ArrayList<>();
+
+        // Creazione dei progetti
+        Progetto progetto1 = new Progetto("Progetto 1");
+        progetto1.aggiungiLinguaggio(new Linguaggio("Java"));
+        progetto1.aggiungiLinguaggio(new Linguaggio("Python"));
+        progetto1.aggiungiLinguaggio(new Linguaggio("HTML"));
+        progetti.add(progetto1);
+
+        Progetto progetto2 = new Progetto("Progetto 2");
+        progetto2.aggiungiLinguaggio(new Linguaggio("C++"));
+        progetto2.aggiungiLinguaggio(new Linguaggio("JavaScript"));
+        progetto2.aggiungiLinguaggio(new Linguaggio("CSS"));
+        progetti.add(progetto2);
+
+        // Creazione degli sviluppatori
+        Sviluppatore sviluppatore1 = new Sviluppatore("Sviluppatore 1");
+        sviluppatore1.aggiungiCompetenza(new Competenza("Java"));
+        sviluppatore1.aggiungiCompetenza(new Competenza("HTML"));
+        sviluppatori.add(sviluppatore1);
+
+        Sviluppatore sviluppatore2 = new Sviluppatore("Sviluppatore 2");
+        sviluppatore2.aggiungiCompetenza(new Competenza("Python"));
+        sviluppatore2.aggiungiCompetenza(new Competenza("JavaScript"));
+        sviluppatori.add(sviluppatore2);
+
+        // Verifica delle competenze degli sviluppatori per i progetti
+        for (Progetto progetto : progetti) {
+            System.out.println("Progetto: " + progetto.getNome());
+            System.out.println("Linguaggi richiesti: " + progetto.getLinguaggiRichiesti());
+
+            for (Sviluppatore sviluppatore : sviluppatori) {
+                System.out.println("Sviluppatore: " + sviluppatore.getNome());
+                System.out.println("Competenze: " + sviluppatore.getCompetenze());
+
+                boolean competenzeSufficienti = true;
+                for (Linguaggio linguaggio : progetto.getLinguaggiRichiesti()) {
+                    boolean haCompetenza = sviluppatore.haCompetenza(new Competenza(linguaggio.getNome()));
+                    if (!haCompetenza) {
+                        competenzeSufficienti = false;
+                        break;
+                    }
+                }
+
+                if (competenzeSufficienti) {
+                    System.out.println("L'utente ha le competenze necessarie per questo progetto.");
+                } else {
+                    System.out.println("L'utente non ha le competenze necessarie per questo progetto.");
+                }
+            }
+        }
+    }
+}
