@@ -1,0 +1,190 @@
+import java.util.*;
+
+class Competenza {
+    private String linguaggio;
+    private int proficiency;
+
+    public Competenza(String linguaggio, int proficiency) {
+        this.linguaggio = linguaggio;
+        this.proficiency = proficiency;
+    }
+
+    public String getLinguaggio() {
+        return linguaggio;
+    }
+
+    public int getProficiency() {
+        return proficiency;
+    }
+}
+
+class Linguaggio {
+    private String nome;
+    private String tier;
+
+    public Linguaggio(String nome, String tier) {
+        this.nome = nome;
+        this.tier = tier;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getTier() {
+        return tier;
+    }
+}
+
+class Progetto {
+    private int id;
+    private String tipo;
+    private int costo;
+    private List<String> linguaggiRichiesti;
+
+    public Progetto(int id, String tipo, int costo) {
+        this.id = id;
+        this.tipo = tipo;
+        this.costo = costo;
+        this.linguaggiRichiesti = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public int getCosto() {
+        return costo;
+    }
+
+    public List<String> getLinguaggiRichiesti() {
+        return linguaggiRichiesti;
+    }
+
+    public void addLinguaggioRichiesto(String linguaggio) {
+        linguaggiRichiesti.add(linguaggio);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Task 1
+        int numProgetti = 5;
+        int numSviluppatori = 4;
+        int numLinguaggi = 3;
+
+        List<Progetto> progetti = new ArrayList<>();
+        progetti.add(new Progetto(1, "API", 100));
+        progetti.add(new Progetto(2, "Finalizzabile", 200));
+        progetti.add(new Progetto(3, "API", 150));
+        progetti.add(new Progetto(4, "Finalizzabile", 300));
+        progetti.add(new Progetto(5, "API", 250));
+
+        List<Competenza> competenze = new ArrayList<>();
+        competenze.add(new Competenza("Java", 3));
+        competenze.add(new Competenza("Python", 2));
+        competenze.add(new Competenza("C++", 1));
+
+        List<Linguaggio> linguaggi = new ArrayList<>();
+        linguaggi.add(new Linguaggio("Java", "beginner"));
+        linguaggi.add(new Linguaggio("Python", "master"));
+        linguaggi.add(new Linguaggio("C++", "intermediate"));
+
+        // Task 2
+        int p = 3;
+        int q = 2;
+
+        // Task 1
+        int numProgettiFinalizzabili = 0;
+        for (Progetto progetto : progetti) {
+            if (progetto.getTipo().equals("Finalizzabile")) {
+                numProgettiFinalizzabili++;
+            }
+        }
+        int numProgettiNonFinalizzabili = numProgetti - numProgettiFinalizzabili;
+
+        // Task 2
+        boolean condizione1 = verificaSviluppatori(competenze, p, q);
+        boolean condizione2 = verificaProgetti(progetti, competenze, p, q);
+        boolean condizione3 = verificaQualificaGrandmaster(competenze, linguaggi, p, q);
+        boolean condizione4 = verificaSviluppatoriProgettiDiversi(progetti);
+
+        // Stampa le informazioni
+        System.out.println("Task 1:");
+        System.out.println(numProgetti + " " + numSviluppatori + " " + numLinguaggi);
+        System.out.println(numProgettiFinalizzabili + " " + numProgettiNonFinalizzabili);
+
+        System.out.println("\nTask 2:");
+        System.out.println(condizione1 && condizione2 && condizione3 && condizione4 ? "YES" : "NO");
+
+        scanner.close();
+    }
+
+    private static boolean verificaSviluppatori(List<Competenza> competenze, int p, int q) {
+        int count = 0;
+        for (Competenza competenza : competenze) {
+            if (competenza.getProficiency() >= q) {
+                count++;
+                if (count >= p) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean verificaProgetti(List<Progetto> progetti, List<Competenza> competenze, int p, int q) {
+        int count = 0;
+        for (Progetto progetto : progetti) {
+            int sviluppatoriCount = 0;
+            for (String linguaggioRichiesto : progetto.getLinguaggiRichiesti()) {
+                for (Competenza competenza : competenze) {
+                    if (competenza.getLinguaggio().equals(linguaggioRichiesto) && competenza.getProficiency() >= 2) {
+                        sviluppatoriCount++;
+                        break;
+                    }
+                }
+            }
+            if (sviluppatoriCount >= q) {
+                count++;
+                if (count >= p) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean verificaQualificaGrandmaster(List<Competenza> competenze, List<Linguaggio> linguaggi, int p, int q) {
+        int count = 0;
+        for (Competenza competenza : competenze) {
+            if (competenza.getProficiency() >= 4) {
+                for (Linguaggio linguaggio : linguaggi) {
+                    if (linguaggio.getNome().equals(competenza.getLinguaggio()) && linguaggio.getTier().equals("master")) {
+                        count++;
+                        break;
+                    }
+                }
+            }
+        }
+        return count >= p && count <= q;
+    }
+
+    private static boolean verificaSviluppatoriProgettiDiversi(List<Progetto> progetti) {
+        Set<Integer> progettiAssegnati = new HashSet<>();
+        for (Progetto progetto : progetti) {
+            if (progettiAssegnati.contains(progetto.getId())) {
+                return true;
+            } else {
+                progettiAssegnati.add(progetto.getId());
+            }
+        }
+        return false;
+    }
+}
