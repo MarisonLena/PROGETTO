@@ -1,20 +1,43 @@
+import java.util.*;
 import java.lang.*;
 public class Progetto {
-    private static void creazioneProgetti (int numeroProgetti, Progetti[] progetti, Scanner input){
-        for (int i=0; i<numeroProgetti; i++){
+    private static void creazioneProgetti(int numeroProgetti, Progetti[] progetti, Scanner input) {
+        for (int i = 0; i < numeroProgetti; i++) {
             String id;
             String tipo;
             int costo;
             int milestone;
 
-            id=input.next();
-            tipo= input.next();
-            costo= input.nextInt();
-            milestone= input.nextInt();
+            id = input.next();
+            tipo = input.next();
+            costo = input.nextInt();
+            milestone = input.nextInt();
 
-            Progetti[i]=new Progetti(id, tipo, costo, milestone);
+            progetti[i] = new Progetti(id, tipo, costo, milestone);
         }
     }
 
-    private static void creazione
+    private static void creazioneLinguaggi (int numeroLinguaggi; Linguaggi[] linguaggio, Scanner input) {
+        for(int i=0; i<numeroLinguaggi; i++){
+            String nome;
+            int diamondTier;
+            int masterTier;
+            int grandmasterTier;
+
+            nome=input.next();
+            diamondTier=input.nextInt();
+            masterTier=input.nextInt();
+            grandmasterTier=input.nextInt();
+
+            linguaggio[i]= new Linguaggi(nome, diamondTier, masterTier, grandmasterTier);
+        }
+
+    }
+
+    private static void creazioneProgrammatori (int numeroProgrammatori, Scanner input, Programmatori[] programmatore){
+        for (int i=0; i<numeroProgrammatori; i++){
+            String id;
+            
+        }
+    }
 }
