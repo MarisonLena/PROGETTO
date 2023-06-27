@@ -1,0 +1,70 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class Progetto {
+    private String id;
+    private String tipo;
+    private double cost;
+    private int milestone;
+    private List<String> LinguaggiRichiesti;
+    private List<String> ProgrammatoriAssegnati;
+
+    public Progetto(String id, String type, double cost, int milestone, List<String> LinguaggiRichiesti,
+                    List<String> ProgrammatoriAssegnati) {
+        this.id = id;
+        this.tipo = type;
+        this.cost = cost;
+        this.milestone = milestone;
+        this.LinguaggiRichiesti = new ArrayList<>(LinguaggiRichiesti);
+        this.ProgrammatoriAssegnati = new ArrayList<>(ProgrammatoriAssegnati);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getType() {
+        return tipo;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public int getMilestone() {
+        return milestone;
+    }
+
+    public List<String> getLinguaggiRichiesti() {
+        return new ArrayList<>(LinguaggiRichiesti);
+    }
+
+    public List<String> getProgrammatoriAssegnati() {
+        return new ArrayList<>(ProgrammatoriAssegnati);
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setType(String type) {
+        this.tipo = type;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    public void setMilestone(int milestone) {
+        this.milestone = milestone;
+    }
+
+    public void setLinguaggiRichiesti(List<String> LinguaggiRichiesti) {
+        this.LinguaggiRichiesti = new ArrayList<>(LinguaggiRichiesti);
+    }
+
+    public void setProgrammatoriAssegnati(List<String> ProgrammatoriAssegnati) {
+        this.ProgrammatoriAssegnati = new ArrayList<>(ProgrammatoriAssegnati);
+    }
+}
+
