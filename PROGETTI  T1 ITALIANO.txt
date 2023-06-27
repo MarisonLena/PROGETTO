@@ -1,0 +1,172 @@
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+class ProgrammingLanguage {
+    private String name;
+    private int diamondTier;
+    private int masterTier;
+    private int grandmasterTier;
+
+    public ProgrammingLanguage(String name, int diamondTier, int masterTier, int grandmasterTier) {
+        this.name = name;
+        this.diamondTier = diamondTier;
+        this.masterTier = masterTier;
+        this.grandmasterTier = grandmasterTier;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getDiamondTier() {
+        return diamondTier;
+    }
+
+    public int getMasterTier() {
+        return masterTier;
+    }
+
+    public int getGrandmasterTier() {
+        return grandmasterTier;
+    }
+}
+
+class Developer {
+    private int id;
+    private List<Map<ProgrammingLanguage, Integer>> proficiency;
+
+    public Developer(int id) {
+        this.id = id;
+        this.proficiency = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void addProficiency(ProgrammingLanguage language, int skill) {
+        Map<ProgrammingLanguage, Integer> proficiencyMap = new HashMap<>();
+        proficiencyMap.put(language, skill);
+        proficiency.add(proficiencyMap);
+    }
+
+    public int getSkillForLanguage(ProgrammingLanguage language) {
+        for (Map<ProgrammingLanguage, Integer> proficiencyMap : proficiency) {
+            if (proficiencyMap.containsKey(language)) {
+                return proficiencyMap.get(language);
+            }
+        }
+        return 0; // Skill not found for the given language
+    }
+
+    public boolean hasQualification(ProgrammingLanguage language, int tier) {
+        int skill = getSkillForLanguage(language);
+        if (tier == language.getGrandmasterTier()) {
+            return skill >= language.getGrandmasterTier();
+        } else if (tier == language.getMasterTier()) {
+            return skill >= language.getMasterTier();
+        } else if (tier == language.getDiamondTier()) {
+            return skill >= language.getDiamondTier();
+        }
+        return false; // Invalid tier
+    }
+}
+
+class Project {
+    private String id;
+    private String type;
+    private double cost;
+    private int milestone;
+    private List<ProgrammingLanguage> requiredLanguages;
+    private List<Developer> assignedDevelopers;
+
+    public Project(String id, String type, double cost, int milestone) {
+        this.id = id;
+        this.type = type;
+        this.cost = cost;
+        this.milestone = milestone;
+        this.requiredLanguages = new ArrayList<>();
+        this.assignedDevelopers = new ArrayList<>();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public int getMilestone() {
+        return milestone;
+    }
+
+    public void addRequiredLanguage(ProgrammingLanguage language) {
+        requiredLanguages.add(language);
+    }
+
+    public List<ProgrammingLanguage> getRequiredLanguages() {
+        return requiredLanguages;
+    }
+
+    public void assignDeveloper(Developer developer) {
+        assignedDevelopers.add(developer);
+    }
+
+    public List<Developer> getAssignedDevelopers() {
+        return assignedDevelopers;
+    }
+
+    public boolean isFinalizable() {
+        int totalEffort = 0;
+        for (Developer developer : assignedDevelopers) {
+            for (ProgrammingLanguage language : requiredLanguages) {
+                totalEffort += developer.getSkillForLanguage(language);
+            }
+        }
+        return totalEffort >= milestone;
+    }
+}
+
+public class ProjectManagementSystem {
+    public static void main(String[] args) {
+        // Creazione dei linguaggi di programmazione
+        ProgrammingLanguage java = new ProgrammingLanguage("Java", 1, 2, 3);
+        ProgrammingLanguage python = new ProgrammingLanguage("Python", 1, 2, 3);
+        ProgrammingLanguage javascript = new ProgrammingLanguage("JavaScript", 1, 2, 3);
+
+        // Creazione degli sviluppatori
+        Developer developer1 = new Developer(1);
+        developer1.addProficiency(java, 2);
+        developer1.addProficiency(python, 3);
+        developer1.addProficiency(javascript, 1);
+
+        Developer developer2 = new Developer(2);
+        developer2.addProficiency(java, 3);
+        developer2.addProficiency(python, 1);
+        developer2.addProficiency(javascript, 2);
+
+        // Creazione dei progetti
+        Project project1 = new Project("P1", "backend", 1000.0, 200);
+        project1.addRequiredLanguage(java);
+
+        Project project2 = new Project("P2", "frontend", 800.0, 150);
+        project2.addRequiredLanguage(javascript);
+
+        // Assegnazione degli sviluppatori ai progetti
+        project1.assignDeveloper(developer1);
+        project2.assignDeveloper(developer2);
+
+        // Verifica se i progetti sono finalizzabili
+        System.out.println("Project 1 is finalizable: " + project1.isFinalizable());
+        System.out.println("Project 2 is finalizable: " + project2.isFinalizable());
+    }
+}
