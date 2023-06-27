@@ -1,0 +1,197 @@
+import java.util.*;
+
+class Linguaggio {
+    String nome;
+    int diamondTier;
+    int masterTier;
+    int grandmasterTier;
+
+    public Linguaggio(String nome, int diamondTier, int masterTier, int grandmasterTier) {
+        this.nome = nome;
+        this.diamondTier = diamondTier;
+        this.masterTier = masterTier;
+        this.grandmasterTier = grandmasterTier;
+    }
+}
+
+class Sviluppatore {
+    int id;
+    List<Competenza> competenze;
+    List<Progetto> progettiAssegnati;
+
+    public Sviluppatore(int id, List<Competenza> competenze) {
+        this.id = id;
+        this.competenze = competenze;
+        this.progettiAssegnati = new ArrayList<>();
+    }
+
+    public void assegnaProgetto(Progetto progetto) {
+        progettiAssegnati.add(progetto);
+    }
+}
+
+class Competenza {
+    String linguaggio;
+    int skill;
+
+    public Competenza(String linguaggio, int skill) {
+        this.linguaggio = linguaggio;
+        this.skill = skill;
+    }
+}
+
+class Progetto {
+    int id;
+    String tipo;
+    int costo;
+    int milestone;
+    List<Linguaggio> linguaggiRichiesti;
+    List<Sviluppatore> sviluppatoriAssegnati;
+
+    public Progetto(int id, String tipo, int costo, int milestone, List<Linguaggio> linguaggiRichiesti, List<Sviluppatore> sviluppatoriAssegnati) {
+        this.id = id;
+        this.tipo = tipo;
+        this.costo = costo;
+        this.milestone = milestone;
+        this.linguaggiRichiesti = linguaggiRichiesti;
+        this.sviluppatoriAssegnati = sviluppatoriAssegnati;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Leggi i dati di input
+        int totaleProgetti = scanner.nextInt();
+        int totaleSviluppatori = scanner.nextInt();
+        int totaleLinguaggi = scanner.nextInt();
+        int p = scanner.nextInt();
+        int q = scanner.nextInt();
+
+        // Leggi i progetti
+        List<Progetto> progetti = new ArrayList<>();
+        for (int i = 0; i < totaleProgetti; i++) {
+            int id = scanner.nextInt();
+            String tipo = scanner.next();
+            int costo = scanner.nextInt();
+            int milestone = scanner.nextInt();
+            List<Linguaggio> linguaggiRichiesti = new ArrayList<>();
+            List<Sviluppatore> sviluppatoriAssegnati = new ArrayList<>();
+
+            for (int j = 0; j < totaleLinguaggi; j++) {
+                String nomeLinguaggio = scanner.next();
+                int diamondTier = scanner.nextInt();
+                int masterTier = scanner.nextInt();
+                int grandmasterTier = scanner.nextInt();
+                Linguaggio linguaggio = new Linguaggio(nomeLinguaggio, diamondTier, masterTier, grandmasterTier);
+                linguaggiRichiesti.add(linguaggio);
+            }
+
+            Progetto progetto = new Progetto(id, tipo, costo, milestone, linguaggiRichiesti, sviluppatoriAssegnati);
+            progetti.add(progetto);
+        }
+
+        // Leggi gli sviluppatori
+        List<Sviluppatore> sviluppatori = new ArrayList<>();
+        for (int i = 0; i < totaleSviluppatori; i++) {
+            int id = scanner.nextInt();
+            int totaleCompetenze = scanner.nextInt();
+            List<Competenza> competenze = new ArrayList<>();
+
+            for (int j = 0; j < totaleCompetenze; j++) {
+                String nomeLinguaggio = scanner.next();
+                int skill = scanner.nextInt();
+                Competenza competenza = new Competenza(nomeLinguaggio, skill);
+                competenze.add(competenza);
+            }
+
+            Sviluppatore sviluppatore = new Sviluppatore(id, competenze);
+            sviluppatori.add(sviluppatore);
+        }
+
+        scanner.close();
+
+        // Verifica le condizioni
+        boolean condizione1 = verificaCondizione1(sviluppatori, p, q);
+        boolean condizione2 = verificaCondizione2(progetti, p, q);
+        boolean condizione3 = verificaCondizione3(sviluppatori, p, q);
+        boolean condizione4 = verificaCondizione4(sviluppatori, progetti);
+
+        // Stampa il risultato
+        if (condizione1 && condizione2 && condizione3 && condizione4) {
+            System.out.println("YES");
+        } else {
+            System.out.println("NO");
+        }
+    }
+
+    private static boolean verificaCondizione1(List<Sviluppatore> sviluppatori, int p, int q) {
+        int count = 0;
+        for (Sviluppatore sviluppatore : sviluppatori) {
+            if (sviluppatore.competenze.size() >= q) {
+                count++;
+                if (count >= p) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean verificaCondizione2(List<Progetto> progetti, int p, int q) {
+        int count = 0;
+        for (Progetto progetto : progetti) {
+            int countSviluppatoriQ = 0;
+            for (Sviluppatore sviluppatore : progetto.sviluppatoriAssegnati) {
+                if (sviluppatore.competenze.size() >= 2) {
+                    countSviluppatoriQ++;
+                }
+            }
+            if (countSviluppatoriQ >= q) {
+                count++;
+                if (count >= p) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean verificaCondizione3(List<Sviluppatore> sviluppatori, int p, int q) {
+        int countGrandmaster = 0;
+        for (Sviluppatore sviluppatore : sviluppatori) {
+            int countGrandmasterLinguaggi = 0;
+            for (Progetto progetto : sviluppatore.progettiAssegnati) {
+                for (Linguaggio linguaggio : progetto.linguaggiRichiesti) {
+                    for (Competenza competenza : sviluppatore.competenze) {
+                        if (competenza.linguaggio.equals(linguaggio.nome) && competenza.skill >= linguaggio.grandmasterTier) {
+                            countGrandmasterLinguaggi++;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (countGrandmasterLinguaggi >= 1) {
+                countGrandmaster++;
+                if (countGrandmaster >= p && countGrandmaster <= q) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean verificaCondizione4(List<Sviluppatore> sviluppatori, List<Progetto> progetti) {
+        for (Sviluppatore sviluppatore : sviluppatori) {
+            Set<String> tipiProgettiAssegnati = new HashSet<>();
+            for (Progetto progetto : sviluppatore.progettiAssegnati) {
+                if (tipiProgettiAssegnati.contains(progetto.tipo)) {
+                    return true;
+                }
+                tipiProgettiAssegnati.add(progetto.tipo);
+            }
+        }
+        return false;
+    }
+}
