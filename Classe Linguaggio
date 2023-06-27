@@ -1,0 +1,34 @@
+public class Language {
+    private String name;
+    private int diamondTier;
+    private int masterTier;
+    private int grandmasterTier;
+
+    public Linguaggio (String name, int diamondTier, int masterTier, int grandmasterTier) {
+        this.name = name;
+        this.diamondTier = diamondTier;
+        this.masterTier = masterTier;
+        this.grandmasterTier = grandmasterTier;
+
+        // Controlliamo il legame tra le varie tier
+        if (!(diamondTier < masterTier && masterTier < grandmasterTier)) {
+            throw new IllegalArgumentException("i valori inseriti sono invalidi in quanto non rispettano il legame: diamond < master < grandmaster ");
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getDiamondTier() {
+        return diamondTier;
+    }
+
+    public int getMasterTier() {
+        return masterTier;
+    }
+
+    public int getGrandmasterTier() {
+        return grandmasterTier;
+    }
+}
