@@ -49,8 +49,7 @@ class Progetto {
     private List<String> LinguaggiRichiesti;
     private List<String> ProgrammatoriAssegnati;
 
-    public Progetto(String id, String type, double cost, int milestone, List<String> LinguaggiRichiesti,
-                    List<String> ProgrammatoriAssegnati) {
+    public Progetto(String id, String type, double cost, int milestone, List<String> LinguaggiRichiesti, List<String> ProgrammatoriAssegnati) {
         this.id = id;
         this.tipo = type;
         this.cost = cost;
@@ -191,8 +190,8 @@ public class Main {
 
         // Leggi il numero totale di progetti, sviluppatori e linguaggi
         int totaleProgetti = scanner.nextInt();
-        int totaleSviluppatori = scanner.nextInt();
         int totaleLinguaggi = scanner.nextInt();
+        int totaleSviluppatori = scanner.nextInt();
 
         // Leggi i progetti
         List<Progetto> progetti = new ArrayList<>();
@@ -201,7 +200,9 @@ public class Main {
             String tipo = scanner.next();
             int costo = scanner.nextInt();
             int milestone = scanner.nextInt();
-            Progetto progetto = new Progetto(id, tipo,costo,milestone,null, null);
+            ArrayList LinguaggiRichiesti = new ArrayList<>();
+            ArrayList ProgrammatoriAssegnati = new ArrayList<>();
+            Progetto progetto = new Progetto(id, tipo,costo,milestone,LinguaggiRichiesti,ProgrammatoriAssegnati);
 
         }
 
@@ -217,3 +218,10 @@ public class Main {
 
 
         }
+
+
+
+
+
+    }
+}
