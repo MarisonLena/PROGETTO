@@ -1,78 +1,92 @@
-import java.util.*;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 class Competenza {
-    String linguaggio;
-    int skill;
+    private String nomeCompetenza;
 
-    public Competenza(String linguaggio, int skill) {
-        this.linguaggio = linguaggio;
-        this.skill = skill;
+    public Competenza(String nomeCompetenza) {
+        this.nomeCompetenza = nomeCompetenza;
+    }
+
+    public String getNomeCompetenza() {
+        return nomeCompetenza;
     }
 }
 
 class Linguaggio {
-    String nome;
-    int tier;
+    private String nomeLinguaggio;
+    private String tierLinguaggio;
 
-    public Linguaggio(String nome, int tier) {
-        this.nome = nome;
-        this.tier = tier;
+    public Linguaggio(String nomeLinguaggio, String tierLinguaggio) {
+        this.nomeLinguaggio = nomeLinguaggio;
+        this.tierLinguaggio = tierLinguaggio;
+    }
+
+    public String getNomeLinguaggio() {
+        return nomeLinguaggio;
+    }
+
+    public String getTierLinguaggio() {
+        return tierLinguaggio;
     }
 }
 
 class Progetto {
-    int id;
-    String tipo;
-    int costo;
-    int milestone;
-    List<Linguaggio> linguaggiRichiesti;
-    List<Sviluppatore> sviluppatoriAssegnati;
+    private int id;
+    private String tipo;
+    private int costo;
+    private List<String> linguaggiRichiesti;
 
-    public Progetto(int id, String tipo, int costo, int milestone, List<Linguaggio> linguaggiRichiesti) {
+    public Progetto(int id, String tipo, int costo) {
         this.id = id;
         this.tipo = tipo;
         this.costo = costo;
-        this.milestone = milestone;
-        this.linguaggiRichiesti = linguaggiRichiesti;
-        this.sviluppatoriAssegnati = new ArrayList<>();
+        this.linguaggiRichiesti = new ArrayList<>();
     }
 
-    public void assegnaSviluppatore(Sviluppatore sviluppatore) {
-        sviluppatoriAssegnati.add(sviluppatore);
+    public int getId() {
+        return id;
     }
 
-    public boolean isFinalizzabile() {
-        int sumEffort = 0;
-        for (Sviluppatore sviluppatore : sviluppatoriAssegnati) {
-            sumEffort += sviluppatore.getEffortForProgetto(this);
-        }
-        return sumEffort >= milestone;
+    public String getTipo() {
+        return tipo;
+    }
+
+    public int getCosto() {
+        return costo;
+    }
+
+    public List<String> getLinguaggiRichiesti() {
+        return linguaggiRichiesti;
+    }
+
+    public void addLinguaggioRichiesto(String linguaggio) {
+        linguaggiRichiesti.add(linguaggio);
     }
 }
 
 class Sviluppatore {
-    int id;
-    List<Competenza> competenze;
-    List<Progetto> progettiAssegnati;
-    Map<Progetto, Integer> effortMap;
+    private String nomeSviluppatore;
+    private List<String> competenze;
 
-    public Sviluppatore(int id, List<Competenza> competenze) {
-        this.id = id;
-        this.competenze = competenze;
-        this.progettiAssegnati = new ArrayList<>();
-        this.effortMap = new HashMap<>();
+    public Sviluppatore(String nomeSviluppatore) {
+        this.nomeSviluppatore = nomeSviluppatore;
+        this.competenze = new ArrayList<>();
     }
 
-    public void assegnaProgetto(Progetto progetto) {
-        progettiAssegnati.add(progetto);
+    public String getNomeSviluppatore() {
+        return nomeSviluppatore;
     }
 
-    public void setEffortForProgetto(Progetto progetto, int effort) {
-        effortMap.put(progetto, effort);
+    public List<String> getCompetenze() {
+        return competenze;
     }
 
-    public int getEffortForProgetto(Progetto progetto) {
-        return effortMap.getOrDefault(progetto, 0);
+    public void addCompetenza(String competenza) {
+        competenze.add(competenza);
     }
 }
 
@@ -80,269 +94,96 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Leggi il numero totale di progetti, sviluppatori e linguaggi
-        int totaleProgetti = scanner.nextInt();
-        int totaleSviluppatori = scanner.nextInt();
-        int totaleLinguaggi = scanner.nextInt();
+        List<Progetto> progetti = inserisciProgetti(scanner);
+        List<Sviluppatore> sviluppatori = inserisciSviluppatori(scanner);
 
-        // Leggi i progetti
+        stampaDettagli(progetti, sviluppatori);
+
+        scanner.close();
+    }
+
+    public static List<Progetto> inserisciProgetti(Scanner scanner) {
+        System.out.println("Inserisci il numero di progetti: ");
+        int numProgetti = scanner.nextInt();
+
         List<Progetto> progetti = new ArrayList<>();
-        for (int i = 0; i < totaleProgetti; i++) {
-            int id = scanner.nextInt();
-            String tipo = scanner.next();
-            int costo = scanner.nextInt();
-            int milestone = scanner.nextInt();
 
-            List<Linguaggio> linguaggiRichiesti = new ArrayList<>();
-            for (int j = 0; j < totaleLinguaggi; j++) {
+        for (int i = 0; i < numProgetti; i++) {
+            System.out.println("Inserisci l'ID del progetto " + (i + 1) + ": ");
+            int id = scanner.nextInt();
+
+            System.out.println("Inserisci il tipo del progetto " + (i + 1) + ": ");
+            String tipo = scanner.next();
+
+            System.out.println("Inserisci il costo del progetto " + (i + 1) + ": ");
+            int costo = scanner.nextInt();
+
+            Progetto progetto = new Progetto(id, tipo, costo);
+
+            System.out.println("Inserisci il numero di linguaggi richiesti per il progetto " + (i + 1) + ": ");
+            int numLinguaggi = scanner.nextInt();
+
+            for (int j = 0; j < numLinguaggi; j++) {
+                System.out.println("Inserisci il nome del linguaggio " + (j + 1) + ": ");
                 String nomeLinguaggio = scanner.next();
-                int tier = scanner.nextInt();
-                Linguaggio linguaggio = new Linguaggio(nomeLinguaggio, tier);
-                linguaggiRichiesti.add(linguaggio);
+
+                System.out.println("Inserisci il tier del linguaggio " + (j + 1) + ": ");
+                String tierLinguaggio = scanner.next();
+
+                Linguaggio linguaggio = new Linguaggio(nomeLinguaggio, tierLinguaggio);
+                progetto.addLinguaggioRichiesto(linguaggio.getNomeLinguaggio() + " (" + linguaggio.getTierLinguaggio() + ")");
             }
 
-            Progetto progetto = new Progetto(id, tipo, costo, milestone, linguaggiRichiesti);
             progetti.add(progetto);
         }
 
-        // Leggi gli sviluppatori
+        return progetti;
+    }
+
+    public static List<Sviluppatore> inserisciSviluppatori(Scanner scanner) {
+        System.out.println("Inserisci il numero di sviluppatori: ");
+        int numSviluppatori = scanner.nextInt();
+
         List<Sviluppatore> sviluppatori = new ArrayList<>();
-        for (int i = 0; i < totaleSviluppatori; i++) {
-            int id = scanner.nextInt();
+
+        for (int i = 0; i < numSviluppatori; i++) {
+            System.out.println("Inserisci il nome dello sviluppatore " + (i + 1) + ": ");
+            String nomeSviluppatore = scanner.next();
+
+            Sviluppatore sviluppatore = new Sviluppatore(nomeSviluppatore);
+
+            System.out.println("Inserisci il numero di competenze per lo sviluppatore " + (i + 1) + ": ");
             int numCompetenze = scanner.nextInt();
 
-            List<Competenza> competenze = new ArrayList<>();
             for (int j = 0; j < numCompetenze; j++) {
-                String linguaggio = scanner.next();
-                int skill = scanner.nextInt();
-                Competenza competenza = new Competenza(linguaggio, skill);
-                competenze.add(competenza);
+                System.out.println("Inserisci il nome della competenza " + (j + 1) + ": ");
+                String nomeCompetenza = scanner.next();
+
+                Competenza competenza = new Competenza(nomeCompetenza);
+                sviluppatore.addCompetenza(competenza.getNomeCompetenza());
             }
 
-            Sviluppatore sviluppatore = new Sviluppatore(id, competenze);
             sviluppatori.add(sviluppatore);
         }
 
-        // Task 1: Calcola e stampa le informazioni richieste
-        System.out.println(totaleProgetti + " " + totaleSviluppatori + " " + totaleLinguaggi);
-        int progettiFinalizzabili = 0;
-        int progettiNonFinalizzabili = 0;
-        int maxSviluppatori = 0;
-        int progettoMaxSviluppatoriId = 0;
-        int numProgettiAPI = 0;
-        int numSviluppatoriRust = 0;
-        int maxProficiency = 0;
-        int numSviluppatoriMaxProficiency = 0;
-        int costoMinimo = Integer.MAX_VALUE;
-        int costoMassimo = Integer.MIN_VALUE;
-        String linguaggioTierMaxMaster = "";
+        return sviluppatori;
+    }
 
+    public static void stampaDettagli(List<Progetto> progetti, List<Sviluppatore> sviluppatori) {
+        System.out.println("\nProgetti:");
         for (Progetto progetto : progetti) {
-            // Verifica se il progetto è finalizzabile
-            if (progetto.isFinalizzabile()) {
-                progettiFinalizzabili++;
-            } else {
-                progettiNonFinalizzabili++;
-            }
-
-            // Verifica il numero massimo di sviluppatori assegnati a un progetto
-            int numSviluppatori = progetto.sviluppatoriAssegnati.size();
-            if (numSviluppatori > maxSviluppatori) {
-                maxSviluppatori = numSviluppatori;
-                progettoMaxSviluppatoriId = progetto.id;
-            }
-
-            // Conta il numero di progetti di tipo API
-            if (progetto.tipo.equals("API")) {
-                numProgettiAPI++;
-            }
-
-            // Conta il numero di sviluppatori con proficiency in Rust maggiore di 10
-            for (Sviluppatore sviluppatore : sviluppatori) {
-                for (Competenza competenza : sviluppatore.competenze) {
-                    if (competenza.linguaggio.equals("rust") && competenza.skill > 10) {
-                        numSviluppatoriRust++;
-                        break;
-                    }
-                }
-            }
-
-            // Verifica il numero massimo di proficiency per uno sviluppatore
-            for (Sviluppatore sviluppatore : sviluppatori) {
-                int numProficiency = sviluppatore.competenze.size();
-                if (numProficiency > maxProficiency) {
-                    maxProficiency = numProficiency;
-                    numSviluppatoriMaxProficiency = 1;
-                } else if (numProficiency == maxProficiency) {
-                    numSviluppatoriMaxProficiency++;
-                }
-            }
-
-            // Verifica il costo minimo e massimo dei progetti
-            int costo = progetto.costo;
-            if (costo < costoMinimo) {
-                costoMinimo = costo;
-            }
-            if (costo > costoMassimo) {
-                costoMassimo = costo;
-            }
-
-            // Trova il nome del linguaggio con il tier master di valore più alto
-            for (Linguaggio linguaggio : progetto.linguaggiRichiesti) {
-                if (linguaggio.tier == 2 && linguaggio.nome.compareTo(linguaggioTierMaxMaster) < 0) {
-                    linguaggioTierMaxMaster = linguaggio.nome;
-                }
-            }
+            System.out.println("ID: " + progetto.getId());
+            System.out.println("Tipo: " + progetto.getTipo());
+            System.out.println("Costo: " + progetto.getCosto());
+            System.out.println("Linguaggi richiesti: " + progetto.getLinguaggiRichiesti());
+            System.out.println();
         }
 
-        System.out.println(progettiFinalizzabili + " " + progettiNonFinalizzabili);
-        System.out.println(progettoMaxSviluppatoriId);
-        System.out.println(numProgettiAPI);
-        System.out.println(numSviluppatoriRust);
-        System.out.println(numSviluppatoriMaxProficiency);
-        System.out.println(costoMinimo + " " + costoMassimo);
-        System.out.println(linguaggioTierMaxMaster);
-
-        // Task 2: Verifica le condizioni e stampa YES o NO
-        int p = scanner.nextInt();
-        int q = scanner.nextInt();
-        boolean condition1 = false;
-        boolean condition2 = false;
-        boolean condition3 = false;
-        boolean condition4 = false;
-
-        // Verifica la condizione 1
-        int sviluppatoriConProficiencyCount = 0;
+        System.out.println("Sviluppatori:");
         for (Sviluppatore sviluppatore : sviluppatori) {
-            if (sviluppatore.competenze.size() >= q) {
-                sviluppatoriConProficiencyCount++;
-            }
+            System.out.println("Nome: " + sviluppatore.getNomeSviluppatore());
+            System.out.println("Competenze: " + sviluppatore.getCompetenze());
+            System.out.println();
         }
-        if (sviluppatoriConProficiencyCount >= p) {
-            condition1 = true;
-        }
-
-        // Verifica la condizione 2
-        int progettiConSviluppatoriCount = 0;
-        int progettiFinalizzabiliConSviluppatoriCount = 0;
-        for (Progetto progetto : progetti) {
-            if (!progetto.sviluppatoriAssegnati.isEmpty()) {
-                progettiConSviluppatoriCount++;
-                if (progetto.isFinalizzabile()) {
-                    progettiFinalizzabiliConSviluppatoriCount++;
-                }
-            }
-        }
-        if (progettiConSviluppatoriCount >= p && progettiFinalizzabiliConSviluppatoriCount > 0) {
-            condition2 = true;
-        }
-
-        // Verifica la condizione 3
-        int sviluppatoriGrandmasterCount = 0;
-        for (Sviluppatore sviluppatore : sviluppatori) {
-            boolean grandmasterFound = false;
-            for (Competenza competenza : sviluppatore.competenze) {
-                if (competenza.skill >= 3) {
-                    grandmasterFound = true;
-                    break;
-                }
-            }
-            if (grandmasterFound) {
-                sviluppatoriGrandmasterCount++;
-            }
-        }
-        if (sviluppatoriGrandmasterCount >= p && sviluppatoriGrandmasterCount <= q) {
-            condition3 = true;
-        }
-
-        // Verifica la condizione 4
-        boolean sviluppatoreDoppioProgetto = false;
-        Set<Integer> progettiTipiDiversi = new HashSet<>();
-        for (Sviluppatore sviluppatore : sviluppatori) {
-            Set<Integer> progettiTipi = new HashSet<>();
-            for (Progetto progetto : sviluppatore.progettiAssegnati) {
-                if (!progettiTipi.add(progetto.id)) {
-                    sviluppatoreDoppioProgetto = true;
-                    progettiTipiDiversi.add(progetto.id);
-                }
-            }
-        }
-        condition4 = !progettiTipiDiversi.isEmpty();
-
-        if (condition1 && condition2 && condition3 && condition4) {
-            System.out.println("YES");
-        } else {
-            System.out.println("NO");
-        }
-
-        // Task 3: Verifica le condizioni e stampa VALID o NOT VALID
-        int numSviluppatoriDaAssegnare = scanner.nextInt();
-        List<Sviluppatore> sviluppatoriDaAssegnare = new ArrayList<>();
-        for (int i = 0; i < numSviluppatoriDaAssegnare; i++) {
-            int id = scanner.nextInt();
-            int numCompetenze = scanner.nextInt();
-
-            List<Competenza> competenze = new ArrayList<>();
-            for (int j = 0; j < numCompetenze; j++) {
-                String linguaggio = scanner.next();
-                int skill = scanner.nextInt();
-                Competenza competenza = new Competenza(linguaggio, skill);
-                competenze.add(competenza);
-            }
-
-            Sviluppatore sviluppatore = new Sviluppatore(id, competenze);
-            sviluppatoriDaAssegnare.add(sviluppatore);
-        }
-
-        boolean condition5 = false;
-        boolean condition6 = false;
-        boolean condition7 = false;
-
-        // Verifica la condizione 5
-        boolean progettoSenzaSviluppatori = false;
-        for (Progetto progetto : progetti) {
-            if (progetto.sviluppatoriAssegnati.isEmpty()) {
-                progettoSenzaSviluppatori = true;
-                break;
-            }
-        }
-        condition5 = progettoSenzaSviluppatori;
-
-        // Verifica la condizione 6
-        boolean progettoFinalizzabilePrecedente = false;
-        for (Progetto progetto : progetti) {
-            if (!progetto.sviluppatoriAssegnati.isEmpty() && progetto.isFinalizzabile()) {
-                progettoFinalizzabilePrecedente = true;
-                break;
-            }
-        }
-        condition6 = progettoFinalizzabilePrecedente;
-
-        // Verifica la condizione 7
-        boolean competenzeSufficienti = true;
-        for (Sviluppatore sviluppatore : sviluppatoriDaAssegnare) {
-            for (Progetto progetto : sviluppatore.progettiAssegnati) {
-                boolean proficiencyFound = false;
-                for (Competenza competenza : sviluppatore.competenze) {
-                    if (progetto.linguaggiRichiesti.stream().anyMatch(l -> l.nome.equals(competenza.linguaggio))) {
-                        proficiencyFound = true;
-                        break;
-                    }
-                }
-                if (!proficiencyFound) {
-                    competenzeSufficienti = false;
-                    break;
-                }
-            }
-        }
-        condition7 = competenzeSufficienti;
-
-        if (condition5 && condition6 && condition7) {
-            System.out.println("VALID");
-        } else {
-            System.out.println("NOT VALID");
-        }
-
-        scanner.close();
     }
 }
