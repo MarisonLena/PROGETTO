@@ -1,43 +1,219 @@
 import java.util.*;
 import java.lang.*;
-public class Progetto {
-    private static void creazioneProgetti(int numeroProgetti, Progetti[] progetti, Scanner input) {
-        for (int i = 0; i < numeroProgetti; i++) {
-            String id;
-            String tipo;
-            int costo;
-            int milestone;
 
-            id = input.next();
-            tipo = input.next();
-            costo = input.nextInt();
-            milestone = input.nextInt();
+// definizione classe Linguaggio
 
-            progetti[i] = new Progetti(id, tipo, costo, milestone);
+class Linguaggio {
+    private String name;
+    private int diamondTier;
+    private int masterTier;
+    private int grandmasterTier;
+
+    public Linguaggio (String name, int diamondTier, int masterTier, int grandmasterTier) {
+        this.name = name;
+        this.diamondTier = diamondTier;
+        this.masterTier = masterTier;
+        this.grandmasterTier = grandmasterTier;
+
+        // Controlliamo il legame tra le varie tier
+        if (!(diamondTier < masterTier && masterTier < grandmasterTier)) {
+            throw new IllegalArgumentException("i valori inseriti sono invalidi in quanto non rispettano il legame: diamond < master < grandmaster ");
         }
     }
 
-    private static void creazioneLinguaggi (int numeroLinguaggi; Linguaggi[] linguaggio, Scanner input) {
-        for(int i=0; i<numeroLinguaggi; i++){
-            String nome;
-            int diamondTier;
-            int masterTier;
-            int grandmasterTier;
-
-            nome=input.next();
-            diamondTier=input.nextInt();
-            masterTier=input.nextInt();
-            grandmasterTier=input.nextInt();
-
-            linguaggio[i]= new Linguaggi(nome, diamondTier, masterTier, grandmasterTier);
-        }
-
+    // le varie funzioni per ottenere informazioni dalla classe linguaggio
+    public String getName() {
+        return name;
     }
 
-    private static void creazioneProgrammatori (int numeroProgrammatori, Scanner input, Programmatori[] programmatore){
-        for (int i=0; i<numeroProgrammatori; i++){
-            String id;
-            
-        }
+    public int getDiamondTier() {
+        return diamondTier;
+    }
+
+    public int getMasterTier() {
+        return masterTier;
+    }
+
+    public int getGrandmasterTier() {
+        return grandmasterTier;
     }
 }
+
+//definizione classe progetto
+
+class Progetto {
+    private String id;
+    private String tipo;
+    private double cost;
+    private int milestone;
+    private List<String> LinguaggiRichiesti;
+    private List<String> ProgrammatoriAssegnati;
+
+    public Progetto(String id, String type, double cost, int milestone, List<String> LinguaggiRichiesti,
+                    List<String> ProgrammatoriAssegnati) {
+        this.id = id;
+        this.tipo = type;
+        this.cost = cost;
+        this.milestone = milestone;
+        this.LinguaggiRichiesti = new ArrayList<>(LinguaggiRichiesti);
+        this.ProgrammatoriAssegnati = new ArrayList<>(ProgrammatoriAssegnati);
+    }
+
+    //le varie funzioni per settare o prendere informazioni dalla classe progetto
+    public String getId() {
+        return id;
+    }
+
+    public String getType() {
+        return tipo;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public int getMilestone() {
+        return milestone;
+    }
+
+    public List<String> getLinguaggiRichiesti() {
+        return new ArrayList<>(LinguaggiRichiesti);
+    }
+
+    public List<String> getProgrammatoriAssegnati() {
+        return new ArrayList<>(ProgrammatoriAssegnati);
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setType(String type) {
+        this.tipo = type;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    public void setMilestone(int milestone) {
+        this.milestone = milestone;
+    }
+
+    public void setLinguaggiRichiesti(List<String> LinguaggiRichiesti) {
+        this.LinguaggiRichiesti = new ArrayList<>(LinguaggiRichiesti);
+    }
+
+    public void setProgrammatoriAssegnati(List<String> ProgrammatoriAssegnati) {
+        this.ProgrammatoriAssegnati = new ArrayList<>(ProgrammatoriAssegnati);
+    }
+}
+
+//definizione classe programmatore
+
+class Programmatore {
+    private int id;
+    private List<Proficiency> proficiencies;
+
+    public Programmatore(int id) {
+        this.id = id;
+        this.proficiencies = new ArrayList<>();
+    }
+
+    public void addProficiency(String language, int skill) {
+        proficiencies.add(new Proficiency(language, skill));
+    }
+    public String getQualification(String language) {
+        int highestSkill = -1;
+        String qualification = "";
+
+        for (Proficiency proficiency : proficiencies) {
+            if (proficiency.getLanguage().equals(language) && proficiency.getSkill() >= highestSkill) {
+                highestSkill = proficiency.getSkill();
+
+                if (highestSkill >= Tier.GRANDMASTER.getTierValue()) {
+                    qualification = Tier.GRANDMASTER.getQualification();
+                } else if (highestSkill >= Tier.MASTER.getTierValue()) {
+                    qualification = Tier.MASTER.getQualification();
+                } else if (highestSkill >= Tier.DIAMOND.getTierValue()) {
+                    qualification = Tier.DIAMOND.getQualification();
+                }
+            }
+        }
+
+        return qualification;
+    }
+}
+enum Tier {
+    DIAMOND("Diamond"),
+    MASTER("Master"),
+    GRANDMASTER("Grandmaster");
+
+    private String qualification;
+
+    Tier(String qualification) {
+        this.qualification = qualification;
+    }
+
+    public String getQualification() {
+        return qualification;
+    }
+
+    public int getTierValue() {
+        return ordinal() + 1;
+    }
+}
+
+// classe proficiency e funzioni per settare o chiamare
+class Proficiency {
+    private String language;
+    private int skill;
+
+    public Proficiency(String language, int skill) {
+        this.language = language;
+        this.skill = skill;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public int getSkill() {
+        return skill;
+    }
+}
+
+//iniziamo il main
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Leggi il numero totale di progetti, sviluppatori e linguaggi
+        int totaleProgetti = scanner.nextInt();
+        int totaleSviluppatori = scanner.nextInt();
+        int totaleLinguaggi = scanner.nextInt();
+
+        // Leggi i progetti
+        List<Progetto> progetti = new ArrayList<>();
+        for (int i = 0; i < totaleProgetti; i++) {
+            String id = scanner.next();
+            String tipo = scanner.next();
+            int costo = scanner.nextInt();
+            int milestone = scanner.nextInt();
+            Progetto progetto = new Progetto(id, tipo,costo,milestone,null, null);
+
+        }
+
+        // Leggi i linguaggi e i valori dei tier
+
+        List<Linguaggio> linguaggi = new ArrayList<>();
+        for (int i = 0; i < totaleLinguaggi; i++) {
+            String nome= scanner.next();
+            int diamondTier= scanner.nextInt();
+            int masterTier= scanner.nextInt();
+            int grandmasterTier= scanner.nextInt();
+            Linguaggio linguaggio = new Linguaggio(nome, diamondTier, masterTier, grandmasterTier);
+
+
+        }
