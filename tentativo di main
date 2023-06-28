@@ -114,7 +114,7 @@ class Programmatore {
     private int id;
     private List<Proficiency> proficiencies;
 
-    public Programmatore(int id) {
+    public Programmatore(int id, Proficiency proficiencies) {
         this.id = id;
         this.proficiencies = new ArrayList<>();
     }
@@ -196,14 +196,21 @@ public class Main {
         // Leggi i progetti
         List<Progetto> progetti = new ArrayList<>();
         for (int i = 0; i < totaleProgetti; i++) {
+            //Progetto progetto = new Progetto("", "",0,0, );
             String id = scanner.next();
             String tipo = scanner.next();
             int costo = scanner.nextInt();
             int milestone = scanner.nextInt();
             ArrayList LinguaggiRichiesti = new ArrayList<>();
             ArrayList ProgrammatoriAssegnati = new ArrayList<>();
+            /*progetto.setId(id);
+            progetto.setType(tipo);
+            progetto.setCost(costo);
+            progetto.setMilestone(milestone);
+            progetto.setLinguaggiRichiesti(LinguaggiRichiesti);
+            progetto.setProgrammatoriAssegnati(ProgrammatoriAssegnati);*/
             Progetto progetto = new Progetto(id, tipo,costo,milestone,LinguaggiRichiesti,ProgrammatoriAssegnati);
-
+            progetti.add(progetto);
         }
 
         // Leggi i linguaggi e i valori dei tier
@@ -215,9 +222,34 @@ public class Main {
             int masterTier= scanner.nextInt();
             int grandmasterTier= scanner.nextInt();
             Linguaggio linguaggio = new Linguaggio(nome, diamondTier, masterTier, grandmasterTier);
+            linguaggi.add(linguaggio);
+        }
+
+        //Linguaggio secondoLinguaggio= linguaggi.get(2);
+        //System.out.println(secondoLinguaggio.getMasterTier());
+
+        //leggi i programmatori
+        List<Programmatore> programmatori = new ArrayList<>();
+        for (int i=0; i<totaleSviluppatori; i++){
+            List<Proficiency> proficiencies = new ArrayList<>();
+            String id = scanner.next();
+             String input = scanner.next();
+
+            if (input.equalsIgnoreCase("java") || input.equalsIgnoreCase("rust") || input.equalsIgnoreCase("clojure")) {
+                String linguaggio = input;
+                int skill = scanner.nextInt();
+                Proficiency proficiency = new Proficiency(linguaggio, skill);
+                proficiencies.add(proficiency);
+                Programmatore programmatore = new Programmatore(id, proficiencies);
+            }
+            else
+
+
 
 
         }
+
+
 
 
 
