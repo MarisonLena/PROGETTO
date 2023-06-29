@@ -106,22 +106,31 @@ class Progetto {
     public void setProgrammatoriAssegnati(List<String> ProgrammatoriAssegnati) {
         this.ProgrammatoriAssegnati = new ArrayList<>(ProgrammatoriAssegnati);
     }
+
+    public void addProgrammatoreAssegnato( String id, int effort){
+        this.id
+
+        programma
+
 }
 
 //definizione classe programmatore
 
 class Programmatore {
-    private int id;
+    private String id;
     private List<Proficiency> proficiencies;
 
-    public Programmatore(int id, Proficiency proficiencies) {
+    public Programmatore(String id, Proficiency proficiencies) {
         this.id = id;
         this.proficiencies = new ArrayList<>();
     }
 
     public void addProficiency(String language, int skill) {
+
         proficiencies.add(new Proficiency(language, skill));
     }
+
+
     public String getQualification(String language) {
         int highestSkill = -1;
         String qualification = "";
@@ -163,7 +172,35 @@ enum Tier {
     }
 }
 
-// classe proficiency e funzioni per settare o chiamare
+// classe ProgrammatoreAssegnato
+class ProgrammatoreAssegnato {
+    private String id;
+    private int effort;
+
+    public ProgrammatoreAssegnato(String id, int effort) {
+        this.id = id;
+        this.effort = effort;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public int getEffort() {
+        return effort;
+    }
+    public void setEffort(int effort){
+        this.effort= effort;
+    }
+
+    public void setId(String id){
+        this.id = id;
+    }
+
+}
+
+
+    // classe proficiency e funzioni per settare o chiamare
 class Proficiency {
     private String language;
     private int skill;
@@ -232,21 +269,67 @@ public class Main {
         List<Programmatore> programmatori = new ArrayList<>();
         for (int i=0; i<totaleSviluppatori; i++){
             List<Proficiency> proficiencies = new ArrayList<>();
-            String id = scanner.next();
-             String input = scanner.next();
+            String input = scanner.nextLine();
+            String[] parts = input.split(" ");
+            String id = parts[0];
+            String[] languageSkills = parts[1].split(",");
+            Programmatore programmatore = new Programmatore(id, null);
+
+            for (String languageSkill : languageSkills) {
+                String[] languageSkillParts = languageSkill.split(":");
+                String language = languageSkillParts[0];
+                int skill = Integer.parseInt(languageSkillParts[1]);
+                //Proficiency proficiency = new Proficiency(language, skill);
+                //proficiencies.add(proficiency);
+                programmatore.addProficiency(language, skill);
+
+
+                System.out.println("l'input era" + input);
+            System.out.println("id" + id);
+            System.out.println("language skill" + languageSkills);
+
+
+
+            /*String id = scanner.next();
+            String input = scanner.next();
 
             if (input.equalsIgnoreCase("java") || input.equalsIgnoreCase("rust") || input.equalsIgnoreCase("clojure")) {
                 String linguaggio = input;
                 int skill = scanner.nextInt();
+                System.out.println("l'input era" + input);
                 Proficiency proficiency = new Proficiency(linguaggio, skill);
                 proficiencies.add(proficiency);
-                Programmatore programmatore = new Programmatore(id, proficiencies);
+                Programmatore programmatore = new Programmatore(id, proficiencies);*/
             }
-            else
+            //else
+        }
 
+        // assegnamo linguaggi e programmatori con il proprio effort ad ogni programma
 
+        for (int i=0; i<totaleProgetti; i++) {
+            List<String> linguaggiRichiesti = new ArrayList<>();
+            List<programmatoriAssegnati> programmatoriAssegnati = new ArrayList<>();
+            String input = scanner.nextLine();
 
+            String[] tokens = input.split("#");
+            String idProgetto = tokens[0].trim();
 
+                for (Progetto progetto : progetti) {
+                    if (progetto.getId().equals(idProgetto)) {
+                        String[] linguaggi = tokens[1].split(",");
+                        for (String linguaggio : linguaggi) {
+                            linguaggiRichiesti.add(linguaggio.trim());
+                        }
+                        break;
+                    }
+                }
+                String programmatoriEffort = tokens[tokens.length - 1].trim();
+                String[] elementi = programmatoriEffort.split (",");
+                String[] parti = elementi[i].split(":");
+                String id = parti[0].trim();
+                int effort = Integer.parseInt(parti[1].trim());
+                programmatoriAssegnati.add()
+            }
         }
 
 
@@ -257,3 +340,4 @@ public class Main {
 
     }
 }
+
