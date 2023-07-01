@@ -1,0 +1,316 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Richiesta del numero di progetti, linguaggi e sviluppatori
+        System.out.print("Inserisci il numero di progetti: ");
+        int numProgetti = scanner.nextInt();
+
+
+        System.out.print("Inserisci il numero di linguaggi: ");
+        int numLinguaggi = scanner.nextInt();
+
+
+        System.out.print("Inserisci il numero di sviluppatori: ");
+        int numSviluppatori = scanner.nextInt();
+
+
+        List<Progetto> progetti = new ArrayList<>();
+        List<Linguaggio> linguaggi = new ArrayList<>();
+        List<Sviluppatore> sviluppatori = new ArrayList<>();
+
+        System.out.println();
+
+        // Input dei progetti
+        for (int i = 1; i <= numProgetti; i++) {
+            System.out.println("Inserisci i dati del progetto " + i + ":");
+            System.out.print("ID progetto: ");
+            String idProgetto = scanner.next();
+
+            System.out.print("Tipo progetto: ");
+            String tipoProgetto = scanner.next();
+
+            System.out.print("Costo progetto: ");
+            int costoProgetto = scanner.nextInt();
+
+
+            System.out.print("Milestone progetto: ");
+            String milestoneProgettoStr = scanner.nextLine();
+            String[] milestoneProgettoArr = milestoneProgettoStr.split(":");
+            List<String> milestoneProgetto = Arrays.asList(milestoneProgettoArr);
+
+            Progetto progetto = new Progetto(idProgetto, tipoProgetto, costoProgetto, new ArrayList<>(milestoneProgetto));
+            progetti.add(progetto);
+
+            System.out.println();
+        }
+        //dati linguaggio
+
+        int k = 1;
+        while (k <= numLinguaggi) {
+            System.out.print("Inserisci i dati del linguaggio " + k + ": ");
+            String datiLinguaggio = scanner.nextLine();
+
+            String[] parts = datiLinguaggio.split(" ");
+
+            String nomeLinguaggio = parts[0];
+
+            int diamondTier = -1;
+            int masterTier = 0;
+            int grandmasterTier = 0;
+
+            for (int j = 1; j < parts.length; j++) {
+                String[] tierInfo = parts[j].split(":");
+                String tierType = tierInfo[0];
+                int tierValue = Integer.parseInt(tierInfo[1]);
+
+                if (tierType.equalsIgnoreCase("diamond")) {
+                    diamondTier = tierValue;
+                } else if (tierType.equalsIgnoreCase("master")) {
+                    masterTier = tierValue;
+                } else if (tierType.equalsIgnoreCase("grandmaster")) {
+                    grandmasterTier = tierValue;
+                }
+            }
+
+            Linguaggio linguaggio = new Linguaggio(nomeLinguaggio, diamondTier, masterTier, grandmasterTier);
+            linguaggi.add(linguaggio);
+
+            k++;
+        }
+
+        // Input degli sviluppatori
+
+        List<String> sviluppatoriID = new ArrayList<>();
+        List<String> sviluppatoriSkills = new ArrayList<>();
+
+        for (int i = 1; i <= numSviluppatori; i++) {
+            System.out.println("Inserisci i dati dello sviluppatore " + i + ":");
+
+            System.out.print("ID sviluppatore skill: ");
+            String idSviluppatore = scanner.next();
+            String skillsInput = scanner.next();
+            scanner.nextLine();
+
+            sviluppatoriID.add(idSviluppatore);
+            sviluppatoriSkills.add(skillsInput);
+
+        }
+
+        for (int i = 0; i < numSviluppatori; i++) {
+            String idSviluppatore = sviluppatoriID.get(i);
+            String skillsInput = sviluppatoriSkills.get(i);
+            String[] skillsArray = skillsInput.split(",");
+
+            Map<String, Integer> proficiency = new HashMap<>();
+            for (String skill : skillsArray) {
+                String[] skillInfo = skill.split(":");
+                String linguaggio = skillInfo[0].trim();
+                int tier = Integer.parseInt(skillInfo[1].trim());
+                proficiency.put(linguaggio, tier);
+            }
+
+            Sviluppatore sviluppatore = new Sviluppatore(idSviluppatore, proficiency);
+            sviluppatori.add(sviluppatore);
+        }
+
+          //progetti con le liste associati
+
+        List<String> listaProgetti = new ArrayList<>();
+        List<String> listaLinguaggi = new ArrayList<>();
+        List<String> listaSviluppatori = new ArrayList<>();
+
+        for (int i = 1; i <= numProgetti; i++) {
+            System.out.println("Inserisci i progetti e con le liste associati " + i + ":");
+            String input = scanner.nextLine();
+
+            String[] progettoInfo = input.split("#");
+            String nomeProgetto = progettoInfo[0].trim();
+
+            listaProgetti.add(nomeProgetto);
+
+            String[] linguaggiArray = progettoInfo[1].trim().split(",");
+            String[] sviluppatoriArray = progettoInfo[2].trim().split(",");
+
+            Collections.addAll(listaLinguaggi, linguaggiArray);
+            Collections.addAll(listaSviluppatori, sviluppatoriArray);
+
+            System.out.println();
+        }
+
+        
+
+
+
+        System.out.println("\nDati inseriti:\n");
+
+        // Stampa dei dati inseriti
+        for (Progetto progetto : progetti) {
+            System.out.println("ID progetto: " + progetto.getId());
+            System.out.println("Tipo progetto: " + progetto.getTipo());
+            System.out.println("Costo progetto: " + progetto.getCosto());
+            System.out.println("Milestone progetto: " + progetto.getMilestone());
+            System.out.println();
+        }
+
+        for (Linguaggio linguaggio : linguaggi) {
+            System.out.println("Nome linguaggio: " + linguaggio.getNome());
+            System.out.println("Diamond tier: " + linguaggio.getDiamondTier());
+            System.out.println("Master tier: " + linguaggio.getMasterTier());
+            System.out.println("Grandmaster tier: " + linguaggio.getGrandmasterTier());
+            System.out.println();
+        }
+
+        for (Sviluppatore sviluppatore : sviluppatori) {
+            System.out.println("ID sviluppatore: " + sviluppatore.getId());
+
+            for (Map.Entry<String, Integer> entry : sviluppatore.getProficiency().entrySet()) {
+                System.out.println("- Linguaggio: " + entry.getKey());
+                System.out.println("  skill: " + entry.getValue());
+            }
+
+            System.out.println();
+        }
+    }
+}
+
+class Progetto {
+    private String id;
+    private String tipo;
+    private int costo;
+    private List<String> milestone;
+    private List<String> linguaggi;
+    private Map<String, Integer> sviluppatori;
+    private List<String> proficiency;
+
+    public Progetto(String id, String tipo, int costo, List<String> milestone) {
+        this.id = id;
+        this.tipo = tipo;
+        this.costo = costo;
+        this.milestone = milestone;
+        this.linguaggi = linguaggi;
+        this.sviluppatori = sviluppatori;
+        this.proficiency = proficiency;
+
+        class progetto {
+            private String nome;
+            private List<Linguaggio> linguaggi;
+            private List<Sviluppatore> sviluppatori;
+
+            public progetto(String nome) {
+                this.nome = nome;
+                linguaggi = new ArrayList<>();
+                sviluppatori = new ArrayList<>();
+            }
+
+            public String getNome() {
+                return nome;
+            }
+
+            public List<Linguaggio> getLinguaggi() {
+                return linguaggi;
+            }
+
+            public List<Sviluppatore> getSviluppatori() {
+                return sviluppatori;
+            }
+        }
+
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public int getCosto() {
+        return costo;
+    }
+
+    public List<String> getMilestone() {
+        return milestone;
+    }
+    public List<String> getLinguaggi() {
+        return linguaggi;
+    }
+
+    public Map<String, Integer> getSviluppatori() {
+        return sviluppatori;
+    }
+    public List<String> getProficiency() {
+        return proficiency;
+    }
+}
+
+
+class Linguaggio {
+    private String nome;
+    private int diamondTier;
+    private int masterTier;
+    private int grandmasterTier;
+
+    public Linguaggio(String nome, int diamondTier, int masterTier, int grandmasterTier) {
+        this.nome = nome;
+        this.diamondTier = diamondTier;
+        this.masterTier = masterTier;
+        this.grandmasterTier = grandmasterTier;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getDiamondTier() {
+        return diamondTier;
+    }
+
+    public int getMasterTier() {
+        return masterTier;
+    }
+
+    public int getGrandmasterTier() {
+        return grandmasterTier;
+    }
+}
+
+class Sviluppatore {
+    private String id;
+    private Map<String, Integer> skill;
+
+    public Sviluppatore(String id, Map<String, Integer> proficiency) {
+        this.id = id;
+        this.skill = proficiency;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Map<String, Integer> getProficiency() {
+        return skill;
+    }
+    public class Proficiency {
+        private Map<String, Integer> skills;
+
+        public Proficiency() {
+            this.skills = new HashMap<>();
+        }
+
+        public void addSkill(String language, int skillLevel) {
+            skills.put(language, skillLevel);
+        }
+
+        public int getSkillLevel(String language) {
+            return skills.getOrDefault(language, 0);
+        }
+
+        public Map<String, Integer> getSkills() {
+            return skills;
+        }
+    }
+}
