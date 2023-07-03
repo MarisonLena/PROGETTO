@@ -556,8 +556,6 @@ public class Main {
                     if (p.isFinalizzabile()) {
                         pFinalizzabiliOrigin++;
                     }
-                }
-                for (Progetto p :progetti){
                     dimensioniOriginali.add(p.getSviluppatoriAssegnati().size());
                 }
                 for (int i = 0; i<n; i++){
@@ -575,7 +573,6 @@ public class Main {
                     }
                     for (int k = 0; k<progetti.size(); k++){
                         int differenza = progetti.get(k).getSviluppatoriAssegnati().size() - dimensioniOriginali.get(k);
-                        System.out.println(differenza);
                         if (differenza == 0){
                             uno = true;
                         }
@@ -589,15 +586,22 @@ public class Main {
                 if (pFinalizzabiliFine>pFinalizzabiliOrigin){
                     due = true;
                 }
+
+                System.out.println(uno);
                 System.out.println(due);
+                System.out.println(tre);
+                if (uno&&due&&tre){
+                    System.out.println("VALID");
+                }
+                else{
+                    System.out.println("NOT VALID");
+                }
 
                 break;
             } else {
                 System.out.println("La task inserita non è corretta, inserire una nuova task.");
             }
         } while (true);
-
-
     }
 }
 
