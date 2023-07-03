@@ -547,7 +547,16 @@ public class Main {
             } else if (task.equals("TASK3")) {
                 int n = scanner.nextInt();
                 boolean uno = false;
+                boolean due = false;
+                boolean tre = false;
+                int pFinalizzabiliOrigin = 0;
+                int pFinalizzabiliFine = 0;
                 List <Integer> dimensioniOriginali = new ArrayList<>();
+                for (Progetto p: progetti) {
+                    if (p.isFinalizzabile()) {
+                        pFinalizzabiliOrigin++;
+                    }
+                }
                 for (Progetto p :progetti){
                     dimensioniOriginali.add(p.getSviluppatoriAssegnati().size());
                 }
@@ -571,15 +580,17 @@ public class Main {
                             uno = true;
                         }
                     }
-
-
-
-
-
-
-
-
                 }
+                for (Progetto p:progetti){
+                    if(p.isFinalizzabile()){
+                        pFinalizzabiliFine ++;
+                    }
+                }
+                if (pFinalizzabiliFine>pFinalizzabiliOrigin){
+                    due = true;
+                }
+                System.out.println(due);
+
                 break;
             } else {
                 System.out.println("La task inserita non è corretta, inserire una nuova task.");
@@ -589,3 +600,6 @@ public class Main {
 
     }
 }
+
+
+
