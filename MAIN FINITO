@@ -148,6 +148,10 @@ class Programmatore {
         return proficiencies;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getQualification(String language) {
         int highestSkill = -1;
         String qualification = "";
@@ -309,6 +313,7 @@ public class Main {
                 proficiencies.add(proficiency);
             }
             Programmatore programmatore = new Programmatore(id, proficiencies);
+            programmatori.add(programmatore);
             //System.out.println("id " + id);
             //System.out.println("language skill " + Arrays.toString(languageSkills));
         }
@@ -331,10 +336,6 @@ public class Main {
                 }
             }
 
-            if (current == null) {
-                throw new RuntimeException("Progetto non trovato");
-            }
-            //Progetto current = progetti.stream().filter(progetto -> progetto.getId().equals(idProgetto)).findFirst().orElseThrow(()-> new RuntimeException("progetto non trovato"));
 
             String[] linguaggiProgetto = tokens[1].split(",");
             current.setLinguaggiRichiesti(List.of(linguaggiProgetto));
@@ -349,5 +350,185 @@ public class Main {
                     })
                     .collect(Collectors.toList());
             current.setProgrammatoriAssegnati(collect);
-            System.out.println(current);
+            //System.out.println(current);
         }
+        do {
+            //System.out.print("Inserisci una task: ");
+            String task= scanner.nextLine();
+            if (task.equals("TASK1")) {
+                //System.out.println("Hai selezionato la task 1.");
+
+                int progettiFinalizzabili = 0;
+                int progettiNonFinalizzabili = 0;
+                int maxProgrammatori = 0;
+                List <String> progettoMaxProgrammatoriId = new ArrayList<>();
+                int numProgettiAPI = 0;
+                int totaleMin = 0;
+                int totaleMax = 0;
+                double costoMin = progetti.get(0).getCost();
+                double costoMax = 0;
+                int maxProficiency = 0;
+                int totMax = 0;
+                int programmatoriRust = 0;
+                int master = 0;
+                List<String> masterLinguaggio = new ArrayList<>();
+
+                // ciclo per dare senso alle variabili costo min e max
+                for (Progetto p : progetti) {
+                    if (p.getCost()>costoMax){
+                        costoMax= p.getCost();
+                    }
+                    if (p.getCost()< costoMin){
+                        costoMin = p.getCost();
+                    }
+                }
+
+                // ciclo per dare senso al punto 6
+                for (Programmatore p : programmatori) {
+                    if (p.getProficiencies().size() > maxProficiency) {
+                        maxProficiency = p.getProficiencies().size();
+                    }
+                }
+
+                //punto 1
+                System.out.println(totaleProgetti + " " + totaleSviluppatori + " " +  totaleLinguaggi);
+
+                //punto 2
+                for (Progetto progetto : progetti) {
+                    if (progetto.isFinalizzabile()) {
+                        progettiFinalizzabili++;
+                    } else {
+                        progettiNonFinalizzabili++;
+                    }
+
+                    //punto 3
+                    int numProgrammatori = progetto.getProgrammatoriAssegnati().size();
+                    if (numProgrammatori > maxProgrammatori) {
+                        maxProgrammatori = numProgrammatori;
+                        progettoMaxProgrammatoriId.add(progetto.getId());
+                    }
+
+                    //punto 4
+                    if (progetto.getType().equals("API")) {
+                        numProgettiAPI++;
+                    }
+                    //punto 7
+                    double costoProgetto = progetto.getCost();
+                    if (costoProgetto == costoMin){ totaleMin ++;}
+                    if (costoProgetto == costoMax){ totaleMax ++;}
+                    }
+
+                for (Programmatore programmatore:programmatori){
+
+                    //punto 6
+                    if (programmatore.getProficiencies().size() == maxProficiency){
+                        totMax ++;
+                    }
+
+                    //punto 5
+                    for (Proficiency proficiency : programmatore.getProficiencies()){
+                        if (proficiency.getLanguage().equals("rust") && proficiency.getSkill() > 10){
+                            programmatoriRust++;
+                        }
+                    }
+                }
+                for (Linguaggio linguaggio : linguaggi){
+                    if (linguaggio.getMasterTier() > master) {
+                        master = linguaggio.getMasterTier();
+                    }
+                }
+
+                for (Linguaggio linguaggio: linguaggi){
+                    if (linguaggio.getMasterTier() == master){
+                        masterLinguaggio.add(linguaggio.getName());
+                    }
+                }
+                System.out.println(progettiFinalizzabili + " " + progettiNonFinalizzabili);
+                Collections.sort(progettoMaxProgrammatoriId);
+                System.out.println(progettoMaxProgrammatoriId.get(0));
+                if (numProgettiAPI == 0)
+                {
+                    System.out.println(" ");
+                }
+                else {
+                    System.out.println(numProgettiAPI);
+                }
+                if (programmatoriRust == 0)
+                {
+                    System.out.println(" ");
+                }
+                else {
+                    System.out.println(programmatoriRust);
+                }
+                System.out.println(totMax);
+                System.out.println(totaleMin + " " + totaleMax);
+                Collections.sort(masterLinguaggio);
+                System.out.println(masterLinguaggio.get(0));
+                break;
+            }
+            else if (task.equals("TASK2")) {
+                int p = scanner.nextInt();
+                int q = scanner.nextInt();
+                boolean uno = false;
+                boolean due = false;
+                boolean tre = false;
+                boolean quattro = false;
+                int minProficiency = 0;
+                int nprog = 0;
+                int progOk = 0;
+                int conteggioGrandmaster = 0;
+
+                //uno
+                for (Programmatore programmatore: programmatori){
+                    if (programmatore.getProficiencies().size() >= q){
+                        minProficiency++;
+                    }
+                }
+                if (minProficiency >= p){
+                    uno = true;
+                }
+
+                //due
+                for (Progetto progetto : progetti){
+                    for (ProgrammatoreAssegnato programmatoreAssegnato : progetto.getProgrammatoriAssegnati()){
+                        for (Programmatore programmatore : programmatori){
+                            if (programmatore.getId().equals(programmatoreAssegnato.getId())){
+                                if (programmatore.getProficiencies().size()>=2) {
+                                    nprog++;
+                                }
+                            }
+                        }
+                        if (nprog >= q){
+                            progOk++;
+                        } nprog =0;
+
+                    }
+
+                }
+                if (progOk >= p) {
+                    due = true;
+                }
+
+                //tre
+                for (Programmatore programmatore : programmatori){
+                    for (Linguaggio linguaggio : linguaggi){
+                        if (programmatore.getQualification(linguaggio.getName()).equals("grandmaster")){
+                            conteggioGrandmaster ++;
+                        }
+                    }
+                }
+                if (conteggioGrandmaster>=p && conteggioGrandmaster<=q) {
+                    tre = true;
+                }
+
+                break;
+            } else if (task.equals("TASK3")) {
+                System.out.println("Hai selezionato la task 3.");
+                break;
+            } else {
+                System.out.println("La task inserita non è corretta, inserire una nuova task.");
+            }
+        } while (true);
+
+    }
+}
