@@ -48,15 +48,15 @@ class Progetto {
     private double cost;
     private int milestone;
     private List<String> LinguaggiRichiesti;
-    private List<ProgrammatoreAssegnato> ProgrammatoriAssegnati;
+    private List<SviluppatoreAssegnato> SviluppatoriAssegnati;
 
-    public Progetto(String id, String type, double cost, int milestone, List<String> LinguaggiRichiesti, List<ProgrammatoreAssegnato> ProgrammatoriAssegnati) {
+    public Progetto(String id, String type, double cost, int milestone, List<String> LinguaggiRichiesti, List<SviluppatoreAssegnato> SviluppatoriAssegnati) {
         this.id = id;
         this.tipo = type;
         this.cost = cost;
         this.milestone = milestone;
-        this.LinguaggiRichiesti = new ArrayList<>(LinguaggiRichiesti);
-        this.ProgrammatoriAssegnati = new ArrayList<>(ProgrammatoriAssegnati);
+        this.LinguaggiRichiesti = LinguaggiRichiesti;
+        this.SviluppatoriAssegnati = SviluppatoriAssegnati;
     }
 
     //le varie funzioni per settare o prendere informazioni dalla classe progetto
@@ -71,7 +71,7 @@ class Progetto {
                 ", cost=" + cost +
                 ", milestone=" + milestone +
                 ", LinguaggiRichiesti=" + LinguaggiRichiesti +
-                ", ProgrammatoriAssegnati=" + ProgrammatoriAssegnati +
+                ", SviluppatoriAssegnati=" + SviluppatoriAssegnati +
                 '}';
     }
 
@@ -91,8 +91,8 @@ class Progetto {
         return new ArrayList<>(LinguaggiRichiesti);
     }
 
-    public List<ProgrammatoreAssegnato> getProgrammatoriAssegnati() {
-        return new ArrayList<>(ProgrammatoriAssegnati);
+    public List<SviluppatoreAssegnato> getSviluppatoriAssegnati() {
+        return new ArrayList<>(SviluppatoriAssegnati);
     }
 
     public void setId(String id) {
@@ -115,26 +115,29 @@ class Progetto {
         this.LinguaggiRichiesti = LinguaggiRichiesti;
     }
 
-    public void setProgrammatoriAssegnati(List<ProgrammatoreAssegnato> ProgrammatoriAssegnati) {
-        this.ProgrammatoriAssegnati = ProgrammatoriAssegnati;
+    public void setSviluppatoriAssegnati(List<SviluppatoreAssegnato> SviluppatoriAssegnati) {
+        this.SviluppatoriAssegnati = SviluppatoriAssegnati;
     }
     public boolean isFinalizzabile() {
         int sumEffort = 0;
-        for (ProgrammatoreAssegnato sviluppatore : ProgrammatoriAssegnati) {
+        for (SviluppatoreAssegnato sviluppatore : SviluppatoriAssegnati) {
             sumEffort += sviluppatore.getEffort();
         }
         return sumEffort >= milestone;
     }
+    public void addSviluppatore(SviluppatoreAssegnato s){
+        this.SviluppatoriAssegnati.add(s);
+    }
 
 }
 
-//definizione classe programmatore
+//definizione classe Sviluppatore
 
-class Programmatore {
+class Sviluppatore {
     private String id;
     private List<Proficiency> proficiencies;
 
-    public Programmatore(String id, List<Proficiency> proficiencies) {
+    public Sviluppatore(String id, List<Proficiency> proficiencies) {
         this.id = id;
         this.proficiencies = proficiencies;
     }
@@ -192,19 +195,19 @@ enum Tier {
     }
 }
 
-// classe ProgrammatoreAssegnato
+// classe SviluppatoreAssegnato
 
-class ProgrammatoreAssegnato {
+class SviluppatoreAssegnato {
     private String id;
     private int effort;
 
-    public ProgrammatoreAssegnato(String id, int effort) {
+    public SviluppatoreAssegnato(String id, int effort) {
         this.id = id;
         this.effort = effort;
     }
 
     public String toString() {
-        return "ProgrammatoreAssegnato{" +
+        return "SviluppatoreAssegnato{" +
                 "id='" + id + '\'' +
                 ", effort=" + effort +
                 '}';
@@ -267,8 +270,8 @@ public class Main {
             int costo = scanner.nextInt();
             int milestone = scanner.nextInt();
             ArrayList LinguaggiRichiesti = new ArrayList<>();
-            ArrayList ProgrammatoriAssegnati = new ArrayList<>();
-            Progetto progetto = new Progetto(id, tipo,costo,milestone,LinguaggiRichiesti,ProgrammatoriAssegnati);
+            ArrayList SviluppatoriAssegnati = new ArrayList<>();
+            Progetto progetto = new Progetto(id, tipo,costo,milestone,LinguaggiRichiesti,SviluppatoriAssegnati);
             progetti.add(progetto);
         }
 
@@ -292,9 +295,9 @@ public class Main {
             linguaggi.add(linguaggio);
         }
 
-        //leggi i programmatori
+        //leggi i Sviluppatori
 
-        List<Programmatore> programmatori = new ArrayList<>();
+        List<Sviluppatore> Sviluppatori = new ArrayList<>();
         for (int i=0; i<totaleSviluppatori; i++){
             List<Proficiency> proficiencies = new ArrayList<>();
             String id = scanner.next();
@@ -303,7 +306,7 @@ public class Main {
             //System.out.println(Arrays.toString(parts));
             String[] languageSkills = p1.split(",");
             //System.out.println(Arrays.toString(languageSkills));
-            //Programmatore programmatore = new Programmatore(id, null);
+            //Sviluppatore Sviluppatore = new Sviluppatore(id, null);
 
             for (String languageSkill : languageSkills) {
                 String[] languageSkillParts = languageSkill.split(":");
@@ -312,20 +315,19 @@ public class Main {
                 Proficiency proficiency = new Proficiency(language, skill);
                 proficiencies.add(proficiency);
             }
-            Programmatore programmatore = new Programmatore(id, proficiencies);
-            programmatori.add(programmatore);
+            Sviluppatore Sviluppatore = new Sviluppatore(id, proficiencies);
+            Sviluppatori.add(Sviluppatore);
             //System.out.println("id " + id);
             //System.out.println("language skill " + Arrays.toString(languageSkills));
         }
         scanner.nextLine();
 
-        // assegnamo linguaggi e programmatori con il proprio effort ad ogni programma
+        // assegnamo linguaggi e Sviluppatori con il proprio effort ad ogni programma
 
         for (int i=0; i<totaleProgetti; i++) {
             //List<String> linguaggiRichiesti = new ArrayList<>();
-            //List<ProgrammatoreAssegnato> programmatoriAssegnati = new ArrayList<>();
+            //List<SviluppatoreAssegnato> SviluppatoriAssegnati = new ArrayList<>();
             String input = scanner.nextLine();
-
             String[] tokens = input.split("#");
             String idProgetto = tokens[0].trim();
             Progetto current = null;
@@ -340,28 +342,28 @@ public class Main {
             String[] linguaggiProgetto = tokens[1].split(",");
             current.setLinguaggiRichiesti(List.of(linguaggiProgetto));
 
-            String programmatoriEffort = tokens[tokens.length - 1].trim();
-            List<ProgrammatoreAssegnato> collect = Arrays.stream(programmatoriEffort.split(","))
+            String SviluppatoriEffort = tokens[tokens.length - 1].trim();
+            List<SviluppatoreAssegnato> collect = Arrays.stream(SviluppatoriEffort.split(","))
                     .map(buffer -> {
                         String[] parti = buffer.split(":");
                         String id = parti[0].trim();
                         int effort = Integer.parseInt(parti[1].trim());
-                        return new ProgrammatoreAssegnato(id, effort);
+                        return new SviluppatoreAssegnato(id, effort);
                     })
                     .collect(Collectors.toList());
-            current.setProgrammatoriAssegnati(collect);
+            current.setSviluppatoriAssegnati(collect);
             //System.out.println(current);
         }
         do {
             //System.out.print("Inserisci una task: ");
-            String task= scanner.nextLine();
+            String task= scanner.next();
             if (task.equals("TASK1")) {
                 //System.out.println("Hai selezionato la task 1.");
 
                 int progettiFinalizzabili = 0;
                 int progettiNonFinalizzabili = 0;
-                int maxProgrammatori = 0;
-                List <String> progettoMaxProgrammatoriId = new ArrayList<>();
+                int maxSviluppatori = 0;
+                List <String> progettoMaxSviluppatoriId = new ArrayList<>();
                 int numProgettiAPI = 0;
                 int totaleMin = 0;
                 int totaleMax = 0;
@@ -369,7 +371,7 @@ public class Main {
                 double costoMax = 0;
                 int maxProficiency = 0;
                 int totMax = 0;
-                int programmatoriRust = 0;
+                int SviluppatoriRust = 0;
                 int master = 0;
                 List<String> masterLinguaggio = new ArrayList<>();
 
@@ -384,7 +386,7 @@ public class Main {
                 }
 
                 // ciclo per dare senso al punto 6
-                for (Programmatore p : programmatori) {
+                for (Sviluppatore p : Sviluppatori) {
                     if (p.getProficiencies().size() > maxProficiency) {
                         maxProficiency = p.getProficiencies().size();
                     }
@@ -402,10 +404,10 @@ public class Main {
                     }
 
                     //punto 3
-                    int numProgrammatori = progetto.getProgrammatoriAssegnati().size();
-                    if (numProgrammatori > maxProgrammatori) {
-                        maxProgrammatori = numProgrammatori;
-                        progettoMaxProgrammatoriId.add(progetto.getId());
+                    int numSviluppatori = progetto.getSviluppatoriAssegnati().size();
+                    if (numSviluppatori > maxSviluppatori) {
+                        maxSviluppatori = numSviluppatori;
+                        progettoMaxSviluppatoriId.add(progetto.getId());
                     }
 
                     //punto 4
@@ -418,17 +420,17 @@ public class Main {
                     if (costoProgetto == costoMax){ totaleMax ++;}
                     }
 
-                for (Programmatore programmatore:programmatori){
+                for (Sviluppatore Sviluppatore:Sviluppatori){
 
                     //punto 6
-                    if (programmatore.getProficiencies().size() == maxProficiency){
+                    if (Sviluppatore.getProficiencies().size() == maxProficiency){
                         totMax ++;
                     }
 
                     //punto 5
-                    for (Proficiency proficiency : programmatore.getProficiencies()){
+                    for (Proficiency proficiency : Sviluppatore.getProficiencies()){
                         if (proficiency.getLanguage().equals("rust") && proficiency.getSkill() > 10){
-                            programmatoriRust++;
+                            SviluppatoriRust++;
                         }
                     }
                 }
@@ -444,8 +446,8 @@ public class Main {
                     }
                 }
                 System.out.println(progettiFinalizzabili + " " + progettiNonFinalizzabili);
-                Collections.sort(progettoMaxProgrammatoriId);
-                System.out.println(progettoMaxProgrammatoriId.get(0));
+                Collections.sort(progettoMaxSviluppatoriId);
+                System.out.println(progettoMaxSviluppatoriId.get(0));
                 if (numProgettiAPI == 0)
                 {
                     System.out.println(" ");
@@ -453,12 +455,12 @@ public class Main {
                 else {
                     System.out.println(numProgettiAPI);
                 }
-                if (programmatoriRust == 0)
+                if (SviluppatoriRust == 0)
                 {
                     System.out.println(" ");
                 }
                 else {
-                    System.out.println(programmatoriRust);
+                    System.out.println(SviluppatoriRust);
                 }
                 System.out.println(totMax);
                 System.out.println(totaleMin + " " + totaleMax);
@@ -479,8 +481,8 @@ public class Main {
                 int conteggioGrandmaster = 0;
 
                 //uno
-                for (Programmatore programmatore: programmatori){
-                    if (programmatore.getProficiencies().size() >= q){
+                for (Sviluppatore Sviluppatore: Sviluppatori){
+                    if (Sviluppatore.getProficiencies().size() >= q){
                         minProficiency++;
                     }
                 }
@@ -490,10 +492,10 @@ public class Main {
 
                 //due
                 for (Progetto progetto : progetti){
-                    for (ProgrammatoreAssegnato programmatoreAssegnato : progetto.getProgrammatoriAssegnati()){
-                        for (Programmatore programmatore : programmatori){
-                            if (programmatore.getId().equals(programmatoreAssegnato.getId())){
-                                if (programmatore.getProficiencies().size()>=2) {
+                    for (SviluppatoreAssegnato SviluppatoreAssegnato : progetto.getSviluppatoriAssegnati()){
+                        for (Sviluppatore Sviluppatore : Sviluppatori){
+                            if (Sviluppatore.getId().equals(SviluppatoreAssegnato.getId())){
+                                if (Sviluppatore.getProficiencies().size()>=2) {
                                     nprog++;
                                 }
                             }
@@ -510,9 +512,9 @@ public class Main {
                 }
 
                 //tre
-                for (Programmatore programmatore : programmatori){
+                for (Sviluppatore Sviluppatore : Sviluppatori){
                     for (Linguaggio linguaggio : linguaggi){
-                        if (programmatore.getQualification(linguaggio.getName()).equals("grandmaster")){
+                        if (Sviluppatore.getQualification(linguaggio.getName()).equals("grandmaster")){
                             conteggioGrandmaster ++;
                         }
                     }
@@ -521,14 +523,69 @@ public class Main {
                     tre = true;
                 }
 
+                //quattro
+                List<String> progAssegnati = new ArrayList<>();
+                for (Progetto progetto : progetti) {
+                    for (SviluppatoreAssegnato SviluppatoreAssegnato : progetto.getSviluppatoriAssegnati()) {
+                        if (progAssegnati.contains(SviluppatoreAssegnato.getId())) {
+                            quattro = true;
+                            break;
+                        } else {
+                            progAssegnati.add(SviluppatoreAssegnato.getId());
+                        }
+                    }
+                    if (quattro) {
+                        break;
+                    }
+                }
+                if(uno&&due&&tre&&quattro){
+                    System.out.println("YES");
+                }
+                else System.out.println("NO");
                 break;
+
             } else if (task.equals("TASK3")) {
-                System.out.println("Hai selezionato la task 3.");
+                int n = scanner.nextInt();
+                boolean uno = false;
+                List <Integer> dimensioniOriginali = new ArrayList<>();
+                for (Progetto p :progetti){
+                    dimensioniOriginali.add(p.getSviluppatoriAssegnati().size());
+                }
+                for (int i = 0; i<n; i++){
+                    String id = scanner.next();
+                    String tokens = scanner.next();
+                    String[] divisione = tokens.split(":");
+                    String idProgetto = divisione[0];
+                    int effort = Integer.parseInt(divisione[1]);
+                    int SviluppatoriAggiunti = 0;
+
+                    for (Progetto progetto : progetti){
+                        if (progetto.getId().equals(idProgetto)) {
+                            progetto.addSviluppatore(new SviluppatoreAssegnato(id, effort));
+                        }
+                    }
+                    for (int k = 0; k<progetti.size(); k++){
+                        int differenza = progetti.get(k).getSviluppatoriAssegnati().size() - dimensioniOriginali.get(k);
+                        System.out.println(differenza);
+                        if (differenza == 0){
+                            uno = true;
+                        }
+                    }
+
+
+
+
+
+
+
+
+                }
                 break;
             } else {
                 System.out.println("La task inserita non è corretta, inserire una nuova task.");
             }
         } while (true);
+
 
     }
 }
