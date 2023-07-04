@@ -1,0 +1,639 @@
+import java.util.*;
+import java.lang.*;
+import java.util.stream.Collectors;
+
+// definizione classe Linguaggio
+
+class Linguaggio {
+    private String name;
+    private int diamondTier;
+    private int masterTier;
+    private int grandmasterTier;
+
+    public Linguaggio (String name, int diamondTier, int masterTier, int grandmasterTier) {
+        this.name = name;
+        this.diamondTier = diamondTier;
+        this.masterTier = masterTier;
+        this.grandmasterTier = grandmasterTier;
+
+        // Controlliamo il legame tra le varie tier
+        if (!(diamondTier < masterTier && masterTier < grandmasterTier)) {
+            throw new IllegalArgumentException("i valori inseriti sono invalidi in quanto non rispettano il legame: diamond < master < grandmaster ");
+        }
+    }
+
+    // le varie funzioni per ottenere informazioni dalla classe linguaggio
+    public String getName() {
+        return name;
+    }
+
+    public int getDiamondTier() {
+        return diamondTier;
+    }
+
+    public int getMasterTier() {
+        return masterTier;
+    }
+
+    public int getGrandmasterTier() {
+        return grandmasterTier;
+    }
+}
+
+//definizione classe progetto
+
+class Progetto {
+    private String id;
+    private String tipo;
+    private double cost;
+    private int milestone;
+    private List<String> LinguaggiRichiesti;
+    private List<SviluppatoreAssegnato> SviluppatoriAssegnati;
+    private boolean finalizzabile;
+    public Progetto(String id, String type, double cost, int milestone, List<String> LinguaggiRichiesti, List<SviluppatoreAssegnato> SviluppatoriAssegnati) {
+        this.id = id;
+        this.tipo = type;
+        this.cost = cost;
+        this.milestone = milestone;
+        this.LinguaggiRichiesti = LinguaggiRichiesti;
+        this.SviluppatoriAssegnati = SviluppatoriAssegnati;
+        this.finalizzabile = false;
+    }
+
+    public static Sviluppatore geSviluppatore() {
+        return null;
+    }
+
+    //le varie funzioni per settare o prendere informazioni dalla classe progetto
+    public String getId() {
+        return id;
+    }
+
+    public String toString() {
+        return "Progetto{" +
+                "id='" + id + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", cost=" + cost +
+                ", milestone=" + milestone +
+                ", LinguaggiRichiesti=" + LinguaggiRichiesti +
+                ", SviluppatoriAssegnati=" + SviluppatoriAssegnati +
+                '}';
+    }
+
+    public String getType() {
+        return tipo;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public int getMilestone() {
+        return milestone;
+    }
+
+    public List<String> getLinguaggiRichiesti() {
+        return new ArrayList<>(LinguaggiRichiesti);
+    }
+
+    public List<SviluppatoreAssegnato> getSviluppatoriAssegnati() {
+        return new ArrayList<>(SviluppatoriAssegnati);
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setType(String type) {
+        this.tipo = type;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    public void setMilestone(int milestone) {
+        this.milestone = milestone;
+    }
+
+    public void setLinguaggiRichiesti(List<String> LinguaggiRichiesti) {
+        this.LinguaggiRichiesti = LinguaggiRichiesti;
+    }
+
+    public void setSviluppatoriAssegnati(List<SviluppatoreAssegnato> SviluppatoriAssegnati) {
+        this.SviluppatoriAssegnati = SviluppatoriAssegnati;
+    }
+    public boolean isFinalizzabile() {
+        int sumEffort = 0;
+        for (SviluppatoreAssegnato sviluppatore : SviluppatoriAssegnati) {
+            sumEffort += sviluppatore.getEffort();
+        }
+        return sumEffort >= milestone;
+    }
+    public void setFinalizzabile(boolean finalizzabile) {
+        this.finalizzabile = finalizzabile;
+    }
+
+    public void addSviluppatore(SviluppatoreAssegnato s){
+        this.SviluppatoriAssegnati.add(s);
+    }
+
+}
+
+//definizione classe Sviluppatore
+
+class Sviluppatore {
+    private String id;
+    private List<Proficiency> proficiencies;
+
+    public Sviluppatore(String id, List<Proficiency> proficiencies) {
+        this.id = id;
+        this.proficiencies = proficiencies;
+    }
+    public boolean haCompetenza(String linguaggio) {
+        for (Proficiency proficiency : proficiencies) {
+            if (proficiency.getLanguage().equals(linguaggio)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void addProficiency(String language, int skill) {
+
+        proficiencies.add(new Proficiency(language, skill));
+    }
+
+    public List<Proficiency> getProficiencies() {
+        return proficiencies;
+    }
+
+
+    public String getId() {
+        return id;
+    }
+
+    public String getQualification(String language) {
+        int highestSkill = -1;
+        String qualification = "";
+
+        for (Proficiency proficiency : proficiencies) {
+            if (proficiency.getLanguage().equals(language) && proficiency.getSkill() >= highestSkill) {
+                highestSkill = proficiency.getSkill();
+
+                if (highestSkill >= Tier.GRANDMASTER.getTierValue()) {
+                    qualification = Tier.GRANDMASTER.getQualification();
+                } else if (highestSkill >= Tier.MASTER.getTierValue()) {
+                    qualification = Tier.MASTER.getQualification();
+                } else if (highestSkill >= Tier.DIAMOND.getTierValue()) {
+                    qualification = Tier.DIAMOND.getQualification();
+                }
+            }
+        }
+        return qualification;
+    }
+}
+enum Tier {
+    DIAMOND("Diamond"),
+    MASTER("Master"),
+    GRANDMASTER("Grandmaster");
+
+    private String qualification;
+
+    Tier(String qualification) {
+        this.qualification = qualification;
+    }
+
+    public String getQualification() {
+        return qualification;
+    }
+
+    public int getTierValue() {
+        return ordinal() + 1;
+    }
+}
+
+// classe SviluppatoreAssegnato
+
+class SviluppatoreAssegnato {
+    private String id;
+    private int effort;
+
+    public SviluppatoreAssegnato(String id, int effort) {
+        this.id = id;
+        this.effort = effort;
+    }
+
+    public String toString() {
+        return "SviluppatoreAssegnato{" +
+                "id='" + id + '\'' +
+                ", effort=" + effort +
+                '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public int getEffort() {
+        return effort;
+    }
+    public void setEffort(int effort){
+        this.effort= effort;
+    }
+
+    public void setId(String id){
+        this.id = id;
+    }
+}
+
+// classe proficiency e funzioni per settare o chiamare
+class Proficiency {
+    private String language;
+    private int skill;
+
+    public Proficiency(String language, int skill) {
+        this.language = language;
+        this.skill = skill;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public int getSkill() {
+        return skill;
+    }
+}
+
+//iniziamo il main
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Leggi il numero totale di progetti, sviluppatori e linguaggi
+
+        int totaleProgetti = scanner.nextInt();
+        int totaleLinguaggi = scanner.nextInt();
+        int totaleSviluppatori = scanner.nextInt();
+
+        // Leggi i progetti
+
+        List<Progetto> progetti = new ArrayList<>();
+        for (int i = 0; i < totaleProgetti; i++) {
+            //Progetto progetto = new Progetto("", "",0,0, );
+            String id = scanner.next();
+            String tipo = scanner.next();
+            int costo = scanner.nextInt();
+            int milestone = scanner.nextInt();
+            ArrayList LinguaggiRichiesti = new ArrayList<>();
+            ArrayList SviluppatoriAssegnati = new ArrayList<>();
+            Progetto progetto = new Progetto(id, tipo,costo,milestone,LinguaggiRichiesti,SviluppatoriAssegnati);
+            progetti.add(progetto);
+        }
+
+        // Leggi i linguaggi e i valori dei tier
+
+        List<Linguaggio> linguaggi = new ArrayList<>();
+        for (int i = 0; i < totaleLinguaggi; i++) {
+            String nome= scanner.next();
+            //System.out.println(nome);
+            scanner.skip(" diamond:");
+            int diamondTier= scanner.nextInt();
+            //System.out.println(diamondTier);
+            scanner.skip(" master:");
+            int masterTier= scanner.nextInt();
+            //System.out.println(masterTier);
+            scanner.skip(" grandmaster:");
+            int grandmasterTier= scanner.nextInt();
+            //System.out.println(grandmasterTier);
+            //System.out.println(diamondTier + " "+ masterTier +" " + grandmasterTier + " " + nome);
+            Linguaggio linguaggio = new Linguaggio(nome, diamondTier, masterTier, grandmasterTier);
+            linguaggi.add(linguaggio);
+        }
+
+        //leggi i Sviluppatori
+
+        List<Sviluppatore> Sviluppatori = new ArrayList<>();
+        for (int i=0; i<totaleSviluppatori; i++){
+            List<Proficiency> proficiencies = new ArrayList<>();
+            String id = scanner.next();
+            //System.out.println(id);
+            String p1 = scanner.next();
+            //System.out.println(Arrays.toString(parts));
+            String[] languageSkills = p1.split(",");
+            //System.out.println(Arrays.toString(languageSkills));
+            //Sviluppatore Sviluppatore = new Sviluppatore(id, null);
+
+            for (String languageSkill : languageSkills) {
+                String[] languageSkillParts = languageSkill.split(":");
+                String language = languageSkillParts[0];
+                int skill = Integer.parseInt(languageSkillParts[1]);
+                Proficiency proficiency = new Proficiency(language, skill);
+                proficiencies.add(proficiency);
+            }
+            Sviluppatore Sviluppatore = new Sviluppatore(id, proficiencies);
+            Sviluppatori.add(Sviluppatore);
+            //System.out.println("id " + id);
+            //System.out.println("language skill " + Arrays.toString(languageSkills));
+        }
+        scanner.nextLine();
+
+        // assegnamo linguaggi e Sviluppatori con il proprio effort ad ogni programma
+
+        for (int i=0; i<totaleProgetti; i++) {
+            //List<String> linguaggiRichiesti = new ArrayList<>();
+            //List<SviluppatoreAssegnato> SviluppatoriAssegnati = new ArrayList<>();
+            String input = scanner.nextLine();
+            String[] tokens = input.split("#");
+            String idProgetto = tokens[0].trim();
+            Progetto current = null;
+            for (Progetto progetto : progetti) {
+                if (progetto.getId().equals(idProgetto)) {
+                    current = progetto;
+                    break;
+                }
+            }
+
+
+            String[] linguaggiProgetto = tokens[1].split(",");
+            current.setLinguaggiRichiesti(List.of(linguaggiProgetto));
+
+            String SviluppatoriEffort = tokens[tokens.length - 1].trim();
+            List<SviluppatoreAssegnato> collect = Arrays.stream(SviluppatoriEffort.split(","))
+                    .map(buffer -> {
+                        String[] parti = buffer.split(":");
+                        String id = parti[0].trim();
+                        int effort = Integer.parseInt(parti[1].trim());
+                        return new SviluppatoreAssegnato(id, effort);
+                    })
+                    .collect(Collectors.toList());
+            current.setSviluppatoriAssegnati(collect);
+            //System.out.println(current);
+        }
+        do {
+            //System.out.print("Inserisci una task: ");
+            String task= scanner.next();
+            if (task.equals("TASK1")) {
+                //System.out.println("Hai selezionato la task 1.");
+
+                int progettiFinalizzabili = 0;
+                int progettiNonFinalizzabili = 0;
+                int maxSviluppatori = 0;
+                List <String> progettoMaxSviluppatoriId = new ArrayList<>();
+                int numProgettiAPI = 0;
+                int totaleMin = 0;
+                int totaleMax = 0;
+                double costoMin = progetti.get(0).getCost();
+                double costoMax = 0;
+                int maxProficiency = 0;
+                int totMax = 0;
+                int SviluppatoriRust = 0;
+                int master = 0;
+                List<String> masterLinguaggio = new ArrayList<>();
+
+                // ciclo per dare senso alle variabili costo min e max
+                for (Progetto p : progetti) {
+                    if (p.getCost()>costoMax){
+                        costoMax= p.getCost();
+                    }
+                    if (p.getCost()< costoMin){
+                        costoMin = p.getCost();
+                    }
+                }
+
+                // ciclo per dare senso al punto 6
+                for (Sviluppatore p : Sviluppatori) {
+                    if (p.getProficiencies().size() > maxProficiency) {
+                        maxProficiency = p.getProficiencies().size();
+                    }
+                }
+
+                //punto 1
+                System.out.println(totaleProgetti + " " + totaleSviluppatori + " " +  totaleLinguaggi);
+
+                //punto 2
+                for (Progetto progetto : progetti) {
+                    if (progetto.isFinalizzabile()) {
+                        progettiFinalizzabili++;
+                    } else {
+                        progettiNonFinalizzabili++;
+                    }
+
+                    //punto 3
+                    int numSviluppatori = progetto.getSviluppatoriAssegnati().size();
+                    if (numSviluppatori > maxSviluppatori) {
+                        maxSviluppatori = numSviluppatori;
+                        progettoMaxSviluppatoriId.add(progetto.getId());
+                    }
+
+                    //punto 4
+                    if (progetto.getType().equals("API")) {
+                        numProgettiAPI++;
+                    }
+                    //punto 7
+                    double costoProgetto = progetto.getCost();
+                    if (costoProgetto == costoMin){ totaleMin ++;}
+                    if (costoProgetto == costoMax){ totaleMax ++;}
+                }
+
+                for (Sviluppatore Sviluppatore:Sviluppatori){
+
+                    //punto 6
+                    if (Sviluppatore.getProficiencies().size() == maxProficiency){
+                        totMax ++;
+                    }
+
+                    //punto 5
+                    for (Proficiency proficiency : Sviluppatore.getProficiencies()){
+                        if (proficiency.getLanguage().equals("rust") && proficiency.getSkill() > 10){
+                            SviluppatoriRust++;
+                        }
+                    }
+                }
+                for (Linguaggio linguaggio : linguaggi){
+                    if (linguaggio.getMasterTier() > master) {
+                        master = linguaggio.getMasterTier();
+                    }
+                }
+
+                for (Linguaggio linguaggio: linguaggi){
+                    if (linguaggio.getMasterTier() == master){
+                        masterLinguaggio.add(linguaggio.getName());
+                    }
+                }
+                System.out.println(progettiFinalizzabili + " " + progettiNonFinalizzabili);
+                Collections.sort(progettoMaxSviluppatoriId);
+                System.out.println(progettoMaxSviluppatoriId.get(0));
+                if (numProgettiAPI == 0)
+                {
+                    System.out.println(" ");
+                }
+                else {
+                    System.out.println(numProgettiAPI);
+                }
+                if (SviluppatoriRust == 0)
+                {
+                    System.out.println(" ");
+                }
+                else {
+                    System.out.println(SviluppatoriRust);
+                }
+                System.out.println(totMax);
+                System.out.println(totaleMin + " " + totaleMax);
+                Collections.sort(masterLinguaggio);
+                System.out.println(masterLinguaggio.get(0));
+                break;
+            }
+            else if (task.equals("TASK2")) {
+                int p = scanner.nextInt();
+                int q = scanner.nextInt();
+                boolean uno = false;
+                boolean due = false;
+                boolean tre = false;
+                boolean quattro = false;
+                int minProficiency = 0;
+                int nprog = 0;
+                int progOk = 0;
+                int conteggioGrandmaster = 0;
+
+                //uno
+                for (Sviluppatore Sviluppatore: Sviluppatori){
+                    if (Sviluppatore.getProficiencies().size() >= q){
+                        minProficiency++;
+                    }
+                }
+                if (minProficiency >= p){
+                    uno = true;
+                }
+
+                //due
+                for (Progetto progetto : progetti){
+                    for (SviluppatoreAssegnato SviluppatoreAssegnato : progetto.getSviluppatoriAssegnati()){
+                        for (Sviluppatore Sviluppatore : Sviluppatori){
+                            if (Sviluppatore.getId().equals(SviluppatoreAssegnato.getId())){
+                                if (Sviluppatore.getProficiencies().size()>=2) {
+                                    nprog++;
+                                }
+                            }
+                        }
+                        if (nprog >= q){
+                            progOk++;
+                        } nprog =0;
+
+                    }
+
+                }
+                if (progOk >= p) {
+                    due = true;
+                }
+
+                //tre
+                for (Sviluppatore Sviluppatore : Sviluppatori){
+                    for (Linguaggio linguaggio : linguaggi){
+                        if (Sviluppatore.getQualification(linguaggio.getName()).equals("grandmaster")){
+                            conteggioGrandmaster ++;
+                        }
+                    }
+                }
+                if (conteggioGrandmaster>=p && conteggioGrandmaster<=q) {
+                    tre = true;
+                }
+
+                //quattro
+                List<String> progAssegnati = new ArrayList<>();
+                for (Progetto progetto : progetti) {
+                    for (SviluppatoreAssegnato SviluppatoreAssegnato : progetto.getSviluppatoriAssegnati()) {
+                        if (progAssegnati.contains(SviluppatoreAssegnato.getId())) {
+                            quattro = true;
+                            break;
+                        } else {
+                            progAssegnati.add(SviluppatoreAssegnato.getId());
+                        }
+                    }
+                    if (quattro) {
+                        break;
+                    }
+                }
+                if(uno&&due&&tre&&quattro){
+                    System.out.println("YES");
+                }
+                else System.out.println("NO");
+                break;
+
+            }else if (task.equals("TASK3")) {
+                int n = scanner.nextInt();
+                boolean uno = false;
+                List<Integer> dimensioniOriginali = new ArrayList<>();
+                for (Progetto p : progetti) {
+                    dimensioniOriginali.add(p.getSviluppatoriAssegnati().size());
+                }
+
+                for (int i = 0; i < n; i++) {
+                    String id = scanner.next();
+                    String tokens = scanner.next();
+                    String[] divisione = tokens.split(":");
+                    String idProgetto = divisione[0];
+                    int effort = Integer.parseInt(divisione[1]);
+                    int sviluppatoriAggiunti = 0;
+
+                    for (Progetto progetto : progetti) {
+                        if (progetto.getId().equals(idProgetto)) {
+                            progetto.addSviluppatore(new SviluppatoreAssegnato(id, effort));
+                            sviluppatoriAggiunti++;
+                        }
+                    }
+
+                    for (int k = 0; k < progetti.size(); k++) {
+                        int differenza = progetti.get(k).getSviluppatoriAssegnati().size() - dimensioniOriginali.get(k);
+                        System.out.println(differenza);
+                        if (differenza == 0) {
+                            uno = true;
+                        }
+                    }
+
+                    if (sviluppatoriAggiunti > 0) {
+                        boolean finalizzabile = false;
+                        for (Progetto progetto : progetti) {
+                            if (progetto.getSviluppatoriAssegnati().size() > 0 && progetto.isFinalizzabile()) {
+                                finalizzabile = true;
+                                break;
+                            }
+                        }
+
+                        if (!finalizzabile) {
+                            System.out.println("NOT VALID");
+                            return;
+                        }
+                    }
+                }
+
+                boolean competenzeValide = true;
+                for (Progetto progetto : progetti) {
+                    for (SviluppatoreAssegnato sviluppatore : progetto.getSviluppatoriAssegnati()) {
+                        if (!Progetto.geSviluppatore().haCompetenza(progetto.getLinguaggiRichiesti().toString())) {
+                            competenzeValide = false;
+                            break;
+                        }
+                    }
+                    if (!competenzeValide) {
+                        break;
+                    }
+                }
+
+                if (uno && competenzeValide) {
+                    System.out.println("VALID");
+                } else {
+                    System.out.println("NOT VALID");
+                }
+
+
+                break;
+            } else {
+                System.out.println("La task inserita non è corretta, inserire una nuova task.");
+            }
+        } while (true);
+
+
+    }
+}
